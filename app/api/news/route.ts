@@ -5,12 +5,12 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    const schools = await db.school.findMany({
+    const news = await db.news.findMany({
       where: {
         isPublished: true,
       },
       include: {
-        programs: {
+        school: {
           select: {
             name: true,
           },
@@ -18,12 +18,15 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(schools, { status: 200 });
+    return NextResponse.json(news, {
+      status: 200,
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
-    console.log("GET SCHOOL ERROR", error);
+    console.log("ERROR API GET NEWS", error);
 
     return NextResponse.json(
-      { error: "Lỗi lấy thông tin trường" },
+      { error: "Lỗi lấy thông tin tin tức" },
       { status: 500 }
     );
   }

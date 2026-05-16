@@ -9,12 +9,9 @@ export async function GET() {
       where: {
         isPublished: true,
       },
-      include: {
-        programs: {
-          select: {
-            name: true,
-          },
-        },
+      select: {
+        id: true,
+        name: true,
       },
     });
 
