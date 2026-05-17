@@ -25,13 +25,11 @@ export const metadata = {
 };
 
 export async function generateStaticParams() {
-  const data = await GetSchools();
+  const schools = await GetSchools();
 
-  if (!data || !data.data) {
+  if (!schools) {
     redirect("/schools");
   }
-
-  const schools = data.data;
 
   return schools.map((school) => ({
     schoolId: school.id,

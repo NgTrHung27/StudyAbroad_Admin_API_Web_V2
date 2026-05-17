@@ -1,80 +1,5 @@
 import { db } from "@/lib/db";
-import { SchoolLib } from "@/types/school";
 import { StudentStatus } from "@prisma/client";
-
-export const GetSchools = async () => {
-  try {
-    // SchoolLib
-    const schools: SchoolLib = await db.school
-      .findMany({
-        where: {
-          isPublished: true,
-        },
-        include: {
-          news: true,
-          galleries: {
-            include: {
-              images: true,
-            },
-          },
-          locations: {
-            include: {
-              contacts: true,
-              images: true,
-            },
-          },
-          programs: {
-            include: {
-              studentPrograms: {
-                select: {
-                  student: {
-                    select: {
-                      id: true,
-                      studentCode: true,
-                      account: {
-                        select: {
-                          name: true,
-                        },
-                      },
-                      cover: true,
-                      degreeType: true,
-                      certificateType: true,
-                      gradeType: true,
-                      gradeScore: true,
-                      status: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          scholarships: {
-            include: {
-              images: true,
-              owners: {
-                include: {
-                  student: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          country: "asc",
-        },
-        cacheStrategy: {
-          swr: 300,
-          ttl: 3600,
-        },
-      })
-      .withAccelerateInfo();
-    return schools;
-  } catch (error) {
-    console.log("GET SCHOOLS DATA ERROR", error);
-
-    return null;
-  }
-};
 
 export type SchoolCard = {
   id: string;
@@ -84,6 +9,73 @@ export type SchoolCard = {
   country: string;
   short: string | null;
   isPublished: boolean;
+};
+
+export const GetSchools = async () => {
+  try {
+    const schools = await db.school.findMany({
+      where: {
+        isPublished: true,
+      },
+      include: {
+        news: true,
+        galleries: {
+          include: {
+            images: true,
+          },
+        },
+        locations: {
+          include: {
+            contacts: true,
+            images: true,
+          },
+        },
+        programs: {
+          include: {
+            studentPrograms: {
+              select: {
+                student: {
+                  select: {
+                    id: true,
+                    studentCode: true,
+                    account: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                    cover: true,
+                    degreeType: true,
+                    certificateType: true,
+                    gradeType: true,
+                    gradeScore: true,
+                    status: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        scholarships: {
+          include: {
+            images: true,
+            owners: {
+              include: {
+                student: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        country: "asc",
+      },
+    });
+    return schools;
+  } catch (error) {
+    console.log("GET SCHOOLS DATA ERROR", error);
+
+    return null;
+  }
 };
 
 export const GetSchoolsCard = async () => {
@@ -100,10 +92,6 @@ export const GetSchoolsCard = async () => {
       },
       orderBy: {
         country: "asc",
-      },
-      cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
       },
     });
 
@@ -173,10 +161,6 @@ export const GetSchoolStudents = async (schoolId: string) => {
           },
         },
       },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
-      },
     });
 
     return students;
@@ -192,10 +176,6 @@ export const GetSchoolLocations = async (schoolId: string) => {
     const locations = await db.schoolLocation.findMany({
       where: {
         schoolId,
-      },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
       },
     });
 
@@ -220,10 +200,6 @@ export const GetSchoolPrograms = async (schoolId: string) => {
           },
         },
       },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
-      },
     });
 
     return programs;
@@ -242,10 +218,6 @@ export const GetSchoolGalleries = async (schoolId: string) => {
       },
       include: {
         images: true,
-      },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
       },
     });
 
@@ -271,10 +243,6 @@ export const GetSchoolScholarships = async (schoolId: string) => {
           },
         },
       },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
-      },
     });
 
     return scholarships;
@@ -290,10 +258,6 @@ export const GetSchoolNews = async (schoolId: string) => {
     const news = await db.news.findMany({
       where: {
         schoolId,
-      },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 300,
       },
     });
 

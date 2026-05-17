@@ -1,6 +1,4 @@
-import { CoreMessage } from "ai";
-
-export interface Chat extends Record<string, any> {
+export interface Chat extends Record<string, unknown> {
   id: string;
   title: string;
   createdAt: Date;
@@ -27,16 +25,6 @@ export interface Session {
 export interface AuthResult {
   type: string;
   message: string;
-}
-
-export interface Chat {
-  id: string;
-  title: string;
-  createdAt: Date;
-  userId: string;
-  path: string;
-  messages: Message[];
-  sharePath?: string;
 }
 
 export interface Message {

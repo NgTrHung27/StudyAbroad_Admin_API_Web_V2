@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import admin from "firebase-admin";
-import { FirebaseMessagingError, Message } from "firebase-admin/messaging";
 import { NextRequest, NextResponse } from "next/server";
 
 // Initialize Firebase Admin SDK
@@ -13,9 +12,7 @@ if (!admin.apps.length) {
       credential: admin.credential.cert(serviceAccount),
     });
   } catch (error) {
-    console.warn('Firebase Admin SDK initialization failed:', error);
-    // Initialize with empty config for build to succeed
-    admin.initializeApp();
+    console.warn("Firebase Admin SDK initialization failed:", error);
   }
 }
 
@@ -40,7 +37,7 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
-        const payload: Message = {
+        const payload = {
           token,
           notification: {
             title: "Welcome to CEMC",
@@ -60,7 +57,11 @@ export async function POST(request: NextRequest) {
           },
         };
 
-        await admin.messaging().send(payload);
+        try {
+          await admin.messaging().send(payload);
+        } catch (fcmError) {
+          console.warn("FCM send failed:", fcmError);
+        }
 
         await db.notificationToken.create({
           data: {
@@ -68,16 +69,11 @@ export async function POST(request: NextRequest) {
             userId,
           },
         });
-
-        return NextResponse.json({
-          success: true,
-          message: "Cập nhật token thông báo thành công",
-        });
       }
 
       return NextResponse.json({
         success: true,
-        message: "Người dùng đã kích hoạt thông báo trước đó",
+        message: "Cập nhật token thông báo thành công",
       });
     } else {
       return NextResponse.json(
@@ -94,12 +90,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, message: "Định dạng JSON không hợp lệ" },
         { status: 400 }
-      );
-    }
-    if (error instanceof FirebaseMessagingError) {
-      return NextResponse.json(
-        { success: false, message: "Token thông báo không hợp lệ" },
-        { status: 500 }
       );
     }
     return NextResponse.json(

@@ -40,10 +40,6 @@ export async function GET(req: Request) {
           },
         },
       },
-      cacheStrategy: {
-        swr: 300,
-        ttl: 3600,
-      },
     });
 
     return NextResponse.json({ schools }, { status: 200 });

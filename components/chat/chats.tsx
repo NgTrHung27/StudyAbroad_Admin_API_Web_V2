@@ -10,6 +10,14 @@ type Props = {
 };
 
 export const Chats = ({ chats, setSenderClientId }: Props) => {
+  if (!chats || chats.length === 0) {
+    return (
+      <div className="text-center text-neutral-500 dark:text-neutral-400 py-4">
+        Không có cuộc trò chuyện nào
+      </div>
+    );
+  }
+
   return chats.map((chat, index) => {
     const clientIds = chat.clientId.split("-");
     const message = chat.messages[chat.messages.length - 1];
