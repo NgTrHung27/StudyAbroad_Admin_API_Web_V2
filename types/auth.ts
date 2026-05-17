@@ -1,4 +1,24 @@
+import { StudentStatus } from "@prisma/client";
 import { z } from "zod";
+
+export type AccountLib = {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  dob: Date;
+  emailVerified: Date | null;
+  phoneNumber: string;
+  address: string;
+  idCardNumber: string;
+  isTwoFactorEnabled: boolean;
+  student: {
+    id: string;
+    studentCode: string | null;
+    status: StudentStatus;
+  } | null;
+  isLocked: boolean;
+};
 
 export const RegisterSchema = z.object({
   email: z.string().email({

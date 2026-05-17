@@ -1,6 +1,7 @@
-import { db } from "./db";
+import { db } from "@/lib/db";
+import { AccountLib } from "@/types/auth";
 
-export const GetAccountLib = async () => {
+export const GetAccountLib = async (): Promise<AccountLib[]> => {
   const accounts = await db.account.findMany({
     select: {
       id: true,
@@ -27,101 +28,97 @@ export const GetAccountLib = async () => {
   return accounts;
 };
 
-export const GetAccountByEmail = async (email: string) => {
+export const GetAccountById = async (id: string) => {
   try {
-    const user = await db.account.findUnique({
-      where: {
-        email,
-      },
+    const account = await db.account.findUnique({
+      where: { id },
       select: {
         id: true,
-        email: true,
-        password: true,
-        emailVerified: true,
         name: true,
+        email: true,
+        image: true,
         dob: true,
+        emailVerified: true,
         phoneNumber: true,
+        address: true,
+        idCardNumber: true,
+        isTwoFactorEnabled: true,
+        isLocked: true,
         student: {
           select: {
             id: true,
             studentCode: true,
-            scholarship: {
-              select: {
-                status: true,
-                description: true,
-                scholarship: {
-                  select: {
-                    name: true,
-                    cover: true,
-                    images: true,
-                    description: true,
-                  },
-                },
-              },
-            },
-            tuitions: {
-              select: {
-                status: true,
-                amount: true,
-                description: true,
-                dueAt: true,
-              },
-            },
             status: true,
+            degreeType: true,
+            certificateType: true,
+            certificateImg: true,
+            gradeType: true,
+            gradeScore: true,
+            cover: true,
+            schoolId: true,
             school: {
               select: {
                 id: true,
                 name: true,
                 logo: true,
-                background: true,
-              },
-            },
-            requirements: {
-              select: {
-                id: true,
-                title: true,
-                images: true,
-                replies: {
-                  select: {
-                    message: true,
-                    senderName: true,
-                    createdAt: true,
-                  },
-                },
-                status: true,
-                description: true,
-              },
-            },
-            program: {
-              select: {
-                program: {
-                  select: {
-                    name: true,
-                  },
-                },
-                scores: {
-                  select: {
-                    title: true,
-                    semester: true,
-                    year: true,
-                    subjects: {
-                      select: {
-                        name: true,
-                        score: true,
-                      },
-                    },
-                  },
-                },
               },
             },
           },
         },
-        isLocked: true,
       },
     });
 
-    return user;
+    return account;
   } catch (error) {
+    console.error("GetAccountById error:", error);
+    return null;
+  }
+};
+
+export const GetAccountByEmail = async (email: string) => {
+  try {
+    const account = await db.account.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        dob: true,
+        emailVerified: true,
+        phoneNumber: true,
+        address: true,
+        idCardNumber: true,
+        password: true,
+        isTwoFactorEnabled: true,
+        isLocked: true,
+        student: {
+          select: {
+            id: true,
+            studentCode: true,
+            status: true,
+            degreeType: true,
+            certificateType: true,
+            certificateImg: true,
+            gradeType: true,
+            gradeScore: true,
+            cover: true,
+            schoolId: true,
+            school: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return account;
+  } catch (error) {
+    console.error("GetAccountByEmail error:", error);
     return null;
   }
 };

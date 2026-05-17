@@ -1,0 +1,225 @@
+{
+  "schools": [
+    {
+      "id": "clx_school_001",
+      "name": "Canada International School",
+      "logo": "https://example.com/cis-logo.png",
+      "background": "https://example.com/cis-bg.jpg",
+      "short": "CIS",
+      "description": "Canada International School - A premier institution for international education",
+      "country": "CANADA",
+      "isPublished": true,
+      "programs": [
+        { "name": "Computer Science" },
+        { "name": "Business Administration" },
+        { "name": "Engineering" }
+      ]
+    },
+    {
+      "id": "clx_school_002",
+      "name": "Korea Global University",
+      "logo": "https://example.com/kgu-logo.png",
+      "background": "https://example.com/kgu-bg.jpg",
+      "short": "KGU",
+      "description": "Leading Korean university for international students",
+      "country": "KOREA",
+      "isPublished": true,
+      "programs": [
+        { "name": "Korean Studies" },
+        { "name": "Technology" }
+      ]
+    }
+  ],
+  "news": [
+    {
+      "id": "clx_news_001",
+      "title": "Tuyển sinh khóa 2026",
+      "content": "Chương trình tuyển sinh cho năm học 2026 đã chính thức mở. Hạn nộp hồ sơ: 30/06/2026",
+      "type": "ANNOUNCEMENT",
+      "cover": "https://example.com/news-1.jpg",
+      "isPublished": true,
+      "school": {
+        "name": "Canada International School"
+      },
+      "createdAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "clx_news_002",
+      "title": "Hội thảo du học Canada",
+      "content": "Sự kiện hội thảo về du học Canada sẽ diễn ra vào ngày 20/01/2026",
+      "type": "EVENT",
+      "cover": "https://example.com/news-2.jpg",
+      "isPublished": true,
+      "school": null,
+      "createdAt": "2026-01-10T08:00:00.000Z"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "clx_account_001",
+      "email": "student1@example.com",
+      "name": "Nguyen Van A",
+      "phoneNumber": "0909123456",
+      "dob": "2006-01-15T00:00:00.000Z",
+      "emailVerified": "2026-01-01T00:00:00.000Z",
+      "student": {
+        "id": "clx_student_001",
+        "studentCode": "STU001",
+        "status": "APPROVED",
+        "degreeType": "HIGHSCHOOL",
+        "certificateType": "IELTS",
+        "gradeType": "GPA",
+        "gradeScore": 3.8
+      }
+    },
+    {
+      "id": "clx_account_002",
+      "email": "student2@example.com",
+      "name": "Tran Thi B",
+      "phoneNumber": "0912345678",
+      "dob": "2006-03-20T00:00:00.000Z",
+      "emailVerified": "2026-01-05T00:00:00.000Z",
+      "student": {
+        "id": "clx_student_002",
+        "studentCode": "STU002",
+        "status": "AWAITING",
+        "degreeType": "UNIVERSITY",
+        "certificateType": "TOEFL",
+        "gradeType": "CGPA",
+        "gradeScore": 8.5
+      }
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": "clx_feedback_001",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "title": "Hỏi về học phí",
+      "message": "Xin cho tôi biết học phí của chương trình Computer Science là bao nhiêu?",
+      "type": "QUESTION",
+      "phone": "+1234567890",
+      "isResolved": false,
+      "isRead": false,
+      "isSpam": false,
+      "createdAt": "2026-01-20T14:30:00.000Z"
+    },
+    {
+      "id": "clx_feedback_002",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "title": "Phản hồi về dịch vụ",
+      "message": "Dịch vụ tư vấn rất tốt, cảm ơn team!",
+      "type": "FEEDBACK",
+      "phone": null,
+      "isResolved": true,
+      "isRead": true,
+      "isSpam": false,
+      "createdAt": "2026-01-18T09:15:00.000Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "clx_notif_001",
+      "title": "Chúc mừng bạn đã được nhận",
+      "body": "Bạn đã được chấp nhận vào chương trình Computer Science",
+      "type": "ANNOUNCEMENT",
+      "senderName": "CEMC Co., Ltd",
+      "isRead": false,
+      "receiverId": "clx_account_001",
+      "createdAt": "2026-01-25T16:00:00.000Z"
+    },
+    {
+      "id": "clx_notif_002",
+      "title": "Nhắc nhở học phí",
+      "body": "Học phí kỳ 2 cần thanh toán trước ngày 15/02/2026",
+      "type": "ANNOUNCEMENT",
+      "senderName": "CEMC Co., Ltd",
+      "isRead": true,
+      "receiverId": "clx_account_001",
+      "createdAt": "2026-01-22T10:00:00.000Z"
+    }
+  ],
+  "chatSessions": [
+    {
+      "id": "clx_chat_001",
+      "clientId": "client_abc123",
+      "name": "Support Chat",
+      "email": "user@example.com",
+      "phone": "0909123456",
+      "userId": null,
+      "createdAt": "2026-01-25T14:00:00.000Z",
+      "updatedAt": "2026-01-25T14:30:00.000Z",
+      "messages": [
+        {
+          "id": "clx_msg_001",
+          "message": "Xin chào, tôi cần hỗ trợ",
+          "role": "USER",
+          "createdAt": "2026-01-25T14:00:00.000Z"
+        },
+        {
+          "id": "clx_msg_002",
+          "message": "Xin chào! Tôi có thể giúp gì cho bạn?",
+          "role": "ADMIN",
+          "createdAt": "2026-01-25T14:05:00.000Z"
+        }
+      ]
+    }
+  ],
+  "countries": [
+    { "id": 1, "name": "Australia", "code": "AUSTRALIA" },
+    { "id": 2, "name": "Korea", "code": "KOREA" },
+    { "id": 3, "name": "Canada", "code": "CANADA" }
+  ],
+  "auth": {
+    "login": {
+      "method": "POST",
+      "endpoint": "/api/auth/login",
+      "body": {
+        "email": "user@example.com",
+        "password": "password123"
+      }
+    },
+    "register": {
+      "method": "POST",
+      "endpoint": "/api/auth/register",
+      "body": {
+        "email": "newstudent@example.com",
+        "password": "securePassword123",
+        "confirmPassword": "securePassword123",
+        "name": "New Student",
+        "phoneNumber": "0909123456",
+        "idCardNumber": "123456789012",
+        "dob": "2006-01-01T00:00:00.000Z",
+        "gender": "MALE",
+        "addressLine": "123 Main Street",
+        "city": "Ho Chi Minh City",
+        "district": "District 1",
+        "ward": "Ward Ben Nghe",
+        "schoolName": "Canada International School",
+        "programName": "Computer Science",
+        "degreeType": "HIGHSCHOOL",
+        "certificateType": "IELTS",
+        "gradeType": "GPA",
+        "gradeScore": "3.8"
+      }
+    }
+  },
+  "studentStatuses": {
+    "AWAITING": "Đang chờ duyệt",
+    "STUDYING": "Đang học",
+    "APPROVED": "Đã duyệt",
+    "DROPPED": "Đã nghỉ"
+  },
+  "feedbackTypes": {
+    "FEEDBACK": "Phản hồi",
+    "SYSTEM": "Hệ thống",
+    "REFUND": "Hoàn tiền",
+    "BILLING": "Thanh toán",
+    "SUBSCRIPTION": "Đăng ký",
+    "SCHOLARSHIP": "Học bổng",
+    "PROCEDURE": "Thủ tục",
+    "GENERAL": "Chung",
+    "QUESTION": "Câu hỏi"
+  }
+}

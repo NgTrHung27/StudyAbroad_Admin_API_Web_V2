@@ -4,6 +4,8 @@ import { getChatSessions } from "@/data/chat-support";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 
+import { ChatSessionRole } from "@prisma/client";
+
 type Props = {
   children: React.ReactNode;
 };
@@ -16,24 +18,46 @@ const DashboardLayout = async ({ children }: Props) => {
   const cookieStore = cookies();
   const clientId = cookieStore.get("ably_clientId");
 
-  const chats = await getChatSessions();
-  const chatsData = chats.map((chat) => {
-    return {
-      id: chat.id,
-      clientId: chat.clientId,
-      name: chat.name,
-      updatedAt: chat.updatedAt,
-      messages: chat.messages.map((message) => {
+  let chatsData: Array<{
+    id: string;
+    clientId: string;
+    name: string;
+    updatedAt: Date;
+    messages: Array<{
+      name: string;
+      message: string;
+      role: ChatSessionRole;
+      createdAt: Date;
+      clientId: string;
+    }>;
+  }> = [];
+
+  try {
+    const chats = await getChatSessions();
+    if (Array.isArray(chats)) {
+      chatsData = chats.map((chat) => {
         return {
-          name: message.name,
-          message: message.message,
-          role: message.role,
-          createdAt: message.createdAt,
-          clientId: message.clientId,
+          id: chat.id,
+          clientId: chat.clientId,
+          name: chat.name,
+          updatedAt: chat.updatedAt,
+          messages: Array.isArray(chat.messages)
+            ? chat.messages.map((message) => {
+                return {
+                  name: message.name,
+                  message: message.message,
+                  role: message.role as "ADMIN" | "USER",
+                  createdAt: message.createdAt,
+                  clientId: message.clientId,
+                };
+              })
+            : [],
         };
-      }),
-    };
-  });
+      });
+    }
+  } catch (error) {
+    console.warn("Chat support database not available:", error);
+  }
 
   return (
     <div

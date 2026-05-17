@@ -5,15 +5,15 @@ importScripts(
   "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js"
 );
 
-// Replace these with your own Firebase config keys...
+// Firebase config from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyDBLRavFJVJ3T_ZRsH86WNmHP70HSZlruU",
-  authDomain: "kltn-56ae4.firebaseapp.com",
-  projectId: "kltn-56ae4",
-  storageBucket: "kltn-56ae4.appspot.com",
-  messagingSenderId: "936640374389",
-  appId: "1:936640374389:web:b00ba0c57f1917fa2cfa3c",
-  measurementId: "G-P8MGH4LMES",
+  apiKey: "AIzaSyBYGrT3c-FdxRoaty73NusA16yjotSepeg",
+  authDomain: "cemc-co.firebaseapp.com",
+  projectId: "cemc-co",
+  storageBucket: "cemc-co.firebasestorage.app",
+  messagingSenderId: "812956802168",
+  appId: "1:812956802168:web:5a9cd3ca5f126a871f618d",
+  measurementId: "G-DFQM3V58QH",
 };
 
 firebase.initializeApp(firebaseConfig);

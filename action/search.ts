@@ -33,7 +33,6 @@ export const search = async (searchQuery: SearchQuery) => {
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -43,17 +42,12 @@ export const search = async (searchQuery: SearchQuery) => {
         country: true,
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const accounts = await db.account.findMany({
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -67,17 +61,12 @@ export const search = async (searchQuery: SearchQuery) => {
         },
       },
       take: 10,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const programs = await db.schoolProgram.findMany({
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -92,17 +81,12 @@ export const search = async (searchQuery: SearchQuery) => {
         },
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const locations = await db.schoolLocation.findMany({
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -117,17 +101,12 @@ export const search = async (searchQuery: SearchQuery) => {
         },
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const scholarships = await db.schoolScholarship.findMany({
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -142,17 +121,12 @@ export const search = async (searchQuery: SearchQuery) => {
         },
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const galleries = await db.schoolGallery.findMany({
       where: {
         name: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -167,17 +141,12 @@ export const search = async (searchQuery: SearchQuery) => {
         },
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
     const news = await db.news.findMany({
       where: {
         title: {
           contains: searchQuery.searchQuery,
-          mode: "insensitive",
         },
       },
       select: {
@@ -187,94 +156,86 @@ export const search = async (searchQuery: SearchQuery) => {
         type: true,
       },
       take: 2,
-      cacheStrategy: {
-        swr: 30,
-        ttl: 100,
-      },
     });
 
-    Promise.all([schools, accounts]).then((values) => {
-      const [schools, accounts] = values;
-
-      schools.forEach((school) => {
-        result.push({
-          id: school.id,
-          image: school.logo,
-          name: school.name,
-          chipValue: school.country,
-          type: "schools",
-        });
+    schools.forEach((school) => {
+      result.push({
+        id: school.id,
+        image: school.logo,
+        name: school.name,
+        chipValue: school.country,
+        type: "schools",
       });
+    });
 
-      accounts.forEach((account) => {
-        if (!account.student) {
-          return;
-        }
-        result.push({
-          id: account.id,
-          image: account.image ?? "/logo_icon_light.png",
-          name: account.name,
-          chipValue: account.student.status,
-          type: "accounts",
-        });
+    accounts.forEach((account) => {
+      if (!account.student) {
+        return;
+      }
+      result.push({
+        id: account.id,
+        image: account.image ?? "/logo_icon_light.png",
+        name: account.name,
+        chipValue: account.student.status,
+        type: "accounts",
       });
+    });
 
-      programs.forEach((program) => {
-        result.push({
-          id: program.school.id,
-          image: program.cover ?? "/logo_icon_light.png",
-          name: program.name,
-          chipValue: program.school.name,
-          type: "schools",
-          schoolSub: "program",
-          schoolSubId: program.id,
-        });
+    programs.forEach((program) => {
+      result.push({
+        id: program.school.id,
+        image: program.cover ?? "/logo_icon_light.png",
+        name: program.name,
+        chipValue: program.school.name,
+        type: "schools",
+        schoolSub: "program",
+        schoolSubId: program.id,
       });
+    });
 
-      locations.forEach((location) => {
-        result.push({
-          id: location.school.id,
-          image: location.cover ?? "/logo_icon_light.png",
-          name: location.name,
-          chipValue: location.school.name,
-          type: "schools",
-          schoolSub: "location",
-          schoolSubId: location.id,
-        });
+    locations.forEach((location) => {
+      result.push({
+        id: location.school.id,
+        image: location.cover ?? "/logo_icon_light.png",
+        name: location.name,
+        chipValue: location.school.name,
+        type: "schools",
+        schoolSub: "location",
+        schoolSubId: location.id,
       });
+    });
 
-      scholarships.forEach((scholarship) => {
-        result.push({
-          id: scholarship.school.id,
-          image: scholarship.cover ?? "/logo_icon_light.png",
-          name: scholarship.name,
-          chipValue: scholarship.school.name,
-          type: "schools",
-          schoolSub: "scholarship",
-          schoolSubId: scholarship.id,
-        });
+    scholarships.forEach((scholarship) => {
+      result.push({
+        id: scholarship.school.id,
+        image: scholarship.cover ?? "/logo_icon_light.png",
+        name: scholarship.name,
+        chipValue: scholarship.school.name,
+        type: "schools",
+        schoolSub: "scholarship",
+        schoolSubId: scholarship.id,
       });
+    });
 
-      galleries.forEach((gallery) => {
-        result.push({
-          id: gallery.school.id,
-          image: gallery.cover ?? "/logo_icon_light.png",
-          name: gallery.name,
-          chipValue: gallery.school.name,
-          type: "schools",
-          schoolSub: "gallery",
-          schoolSubId: gallery.id,
-        });
+    galleries.forEach((gallery) => {
+      result.push({
+        id: gallery.school.id,
+        image: gallery.cover ?? "/logo_icon_light.png",
+        name: gallery.name,
+        chipValue: gallery.school.name,
+        type: "schools",
+        schoolSub: "gallery",
+        schoolSubId: gallery.id,
       });
+    });
 
-      news.forEach((news) => {
-        result.push({
-          id: news.id,
-          image: news.cover ?? "/logo_icon_light.png",
-          name: news.title,
-          chipValue: news.type,
-          type: "news",
-        });
+    news.forEach((newsItem) => {
+      result.push({
+        id: newsItem.id,
+        image: newsItem.cover ?? "/logo_icon_light.png",
+        name: newsItem.title,
+        chipValue: newsItem.type,
+        type: "news",
       });
     });
 

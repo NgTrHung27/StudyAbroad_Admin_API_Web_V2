@@ -1,16 +1,39 @@
 "use server";
 
 import { db } from "@/lib/db";
-import admin from "firebase-admin";
-import { Message } from "firebase-admin/messaging";
 
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
-  );
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+let adminInitialized = false;
+let firebaseAdmin: typeof import("firebase-admin") | null = null;
+
+async function getFirebaseAdmin() {
+  if (adminInitialized && firebaseAdmin) {
+    return firebaseAdmin;
+  }
+
+  try {
+    const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    if (!serviceAccountStr) {
+      console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set");
+      return null;
+    }
+
+    const serviceAccount = JSON.parse(serviceAccountStr);
+    const { default: admin } = await import("firebase-admin");
+    
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    }
+    
+    adminInitialized = true;
+    firebaseAdmin = admin;
+    return admin;
+  } catch (error) {
+    console.error("Failed to initialize Firebase Admin:", error);
+    adminInitialized = true;
+    return null;
+  }
 }
 
 export const UpsertNotificationToken = async (
@@ -67,36 +90,41 @@ export const SendGeneralNotifications = async (
       },
     });
 
-    await Promise.all(
-      tokens.map((token) => {
-        const payload: Message = {
-          token: token.token,
-          notification: {
-            title,
-            body,
-          },
-          android: {
+    const admin = await getFirebaseAdmin();
+    
+    if (admin) {
+      const messaging = admin.messaging();
+      await Promise.all(
+        tokens.map((token) => {
+          const payload = {
+            token: token.token,
             notification: {
-              clickAction: "FLUTTER_NOTIFICATION_CLICK",
+              title,
+              body,
             },
-          },
-          apns: {
-            payload: {
-              aps: {
-                category: "CEMC",
+            android: {
+              notification: {
+                clickAction: "FLUTTER_NOTIFICATION_CLICK",
               },
             },
-          },
-          webpush: {
-            fcmOptions: {
-              link,
+            apns: {
+              payload: {
+                aps: {
+                  category: "CEMC",
+                },
+              },
             },
-          },
-        };
+            webpush: {
+              fcmOptions: {
+                link,
+              },
+            },
+          };
 
-        admin.messaging().send(payload);
-      })
-    );
+          return admin.messaging().send(payload);
+        })
+      );
+    }
 
     await db.notificationPush.createMany({
       data: tokens.map((token) => ({

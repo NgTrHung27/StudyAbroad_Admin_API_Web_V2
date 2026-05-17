@@ -126,7 +126,7 @@ export async function POST(req: Request) {
         phoneNumber,
         student: {
           create: {
-            certificateImg,
+            certificateImg: certificateImg ?? "",
             certificateType,
             degreeType,
             gradeScore: parseFloat(gradeScore),

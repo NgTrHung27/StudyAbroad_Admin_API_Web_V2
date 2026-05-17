@@ -8,12 +8,15 @@ import { type ThemeProviderProps } from "next-themes/dist/types";
 import * as React from "react";
 import { toast } from "sonner";
 
+// Set to true if FCM is properly configured
+const FCM_ENABLED = false;
+
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const { token } = useFcmToken();
   const { user } = useUser(); // Get the current user from Clerk.
 
   React.useEffect(() => {
-    if (!user) return;
+    if (!user || !FCM_ENABLED) return;
 
     async function upsertToken() {
       if (token && user) {

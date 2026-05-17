@@ -1,6 +1,5 @@
 import { db } from "./db";
 import { DegreeType } from "@prisma/client";
-import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";
 
 export const getStudentByAccountId = async (accountId: string) => {
@@ -61,13 +60,6 @@ export const getStudentByAccountId = async (accountId: string) => {
           },
         },
       },
-      tuitions: true,
-      requirements: {
-        include: {
-          replies: true,
-          images: true,
-        },
-      },
     },
   });
 
@@ -104,13 +96,6 @@ export const getStudentById = async (id: string) => {
       scholarship: {
         include: {
           scholarship: true,
-        },
-      },
-      tuitions: true,
-      requirements: {
-        include: {
-          replies: true,
-          images: true,
         },
       },
     },

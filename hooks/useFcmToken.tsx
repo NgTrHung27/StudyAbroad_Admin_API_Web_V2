@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+// Set to true only when FCM is properly configured with valid VAPID key and domain
+const FCM_ENABLED = false;
+
 async function getNotificationPermissionAndToken() {
+  if (!FCM_ENABLED) {
+    return null;
+  }
+
   // Step 1: Check if Notifications are supported in the browser.
   if (!("Notification" in window)) {
     console.info("This browser does not support desktop notification");
@@ -40,13 +47,18 @@ const useFcmToken = () => {
   const isLoading = useRef(false); // Ref to keep track if a token fetch is currently in progress.
 
   const loadToken = async () => {
+    // Skip if FCM is disabled
+    if (!FCM_ENABLED) {
+      return;
+    }
+
     // Step 4: Prevent multiple fetches if already fetched or in progress.
     if (isLoading.current) return;
 
     isLoading.current = true; // Mark loading as in progress.
     const token = await getNotificationPermissionAndToken(); // Fetch the token.
 
-    // Step 5: Handle the case where permission is denied.
+    // Step 5: Handle the case where permission is denied or token fetch failed.
     if (Notification.permission === "denied") {
       setNotificationPermissionStatus("denied");
       console.info(
@@ -61,10 +73,6 @@ const useFcmToken = () => {
     // This step is typical initially as the service worker may not be ready/installed yet.
     if (!token) {
       if (retryLoadToken.current >= 3) {
-        toast.error(
-          "Không thể nhận thông báo. Vui lòng kiểm tra lại cài đặt thông báo trên trình duyệt của bạn."
-        );
-        alert("Unable to load token, refresh the browser");
         console.info(
           "%cPush Notifications issue - unable to load token after 3 retries",
           "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"
@@ -87,6 +95,11 @@ const useFcmToken = () => {
   };
 
   useEffect(() => {
+    // Skip if FCM is disabled
+    if (!FCM_ENABLED) {
+      return;
+    }
+
     // Step 8: Initialize token loading when the component mounts.
     if ("Notification" in window) {
       loadToken();
