@@ -1,0 +1,512 @@
+{
+  "info": {
+    "name": "StudyAbroad Admin API",
+    "description": "API Documentation for StudyAbroad Admin Web App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://study-abroad-ceme-admin.vercel.app"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "YOUR_JWT_TOKEN_HERE",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with email and password"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"securePassword123\",\n  \"confirmPassword\": \"securePassword123\",\n  \"name\": \"Nguyen Van Student\",\n  \"phoneNumber\": \"0909123456\",\n  \"idCardNumber\": \"123456789012\",\n  \"dob\": \"2006-01-01T00:00:00.000Z\",\n  \"gender\": \"MALE\",\n  \"addressLine\": \"123 Street\",\n  \"city\": \"Ho Chi Minh\",\n  \"district\": \"District 1\",\n  \"ward\": \"Ward 1\",\n  \"schoolName\": \"Canada International School\",\n  \"programName\": \"Computer Science\",\n  \"degreeType\": \"HIGHSCHOOL\",\n  \"certificateType\": \"IELTS\",\n  \"gradeType\": \"GPA\",\n  \"gradeScore\": \"3.5\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register new student account"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "reset-password"]
+            },
+            "description": "Request password reset email"
+          }
+        },
+        {
+          "name": "New Password (with token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"newPassword123\",\n  \"confirmPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/new-password/RESET_TOKEN",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "new-password", "RESET_TOKEN"]
+            },
+            "description": "Set new password with reset token"
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "delete"]
+            },
+            "description": "Delete current user account"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Schools",
+      "item": [
+        {
+          "name": "Get All Schools",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"]
+            },
+            "description": "Get list of all schools"
+          }
+        },
+        {
+          "name": "Get School by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/{schoolId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "{schoolId}"]
+            },
+            "description": "Get school details by ID"
+          }
+        },
+        {
+          "name": "Get Schools Full Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/full",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "full"]
+            },
+            "description": "Get all schools with full details including locations, programs, etc."
+          }
+        },
+        {
+          "name": "Get School Names (dropdown)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/nameSchools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nameSchools"]
+            },
+            "description": "Get school names for dropdown selection"
+          }
+        },
+        {
+          "name": "Get Schools for Auth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "schools"]
+            },
+            "description": "Get schools list for authentication context"
+          }
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "item": [
+        {
+          "name": "Get All News",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/news",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "news"]
+            },
+            "description": "Get all news articles"
+          }
+        },
+        {
+          "name": "Get News by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/news/{newsId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "news", "{newsId}"]
+            },
+            "description": "Get news article by ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "Get Account by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/{accountId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "{accountId}"]
+            },
+            "description": "Get account details by ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/{profileId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile", "{profileId}"]
+            },
+            "description": "Get user profile by ID"
+          }
+        },
+        {
+          "name": "Update Profile Bio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Your biography here...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/Bio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile", "Bio"]
+            },
+            "description": "Update profile biography"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications by User ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/{userId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "{userId}"]
+            },
+            "description": "Get all notifications for a user"
+          }
+        },
+        {
+          "name": "Upsert FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user_id_here\",\n  \"token\": \"fcm_token_here\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"]
+            },
+            "description": "Register or update FCM token for push notifications"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feedbacks",
+      "item": [
+        {
+          "name": "Get All Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feedbacks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feedbacks"]
+            },
+            "description": "Get all feedback/contact submissions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Countries",
+      "item": [
+        {
+          "name": "Get Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/country",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "country"]
+            },
+            "description": "Get list of supported countries"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello\",\n  \"role\": \"USER\",\n  \"clientId\": \"client_abc123\",\n  \"accountId\": \"account_id_here\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message", "chat"]
+            },
+            "description": "Send a chat message"
+          }
+        },
+        {
+          "name": "Send Private Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": \"sender_id\",\n  \"receiverId\": \"receiver_id\",\n  \"message\": \"Private message\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message/private",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message", "private"]
+            },
+            "description": "Send private message between users"
+          }
+        },
+        {
+          "name": "Send Group Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"groupId\": \"group_id\",\n  \"senderId\": \"sender_id\",\n  \"message\": \"Group message\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message/group",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message", "group"]
+            },
+            "description": "Send message to group"
+          }
+        },
+        {
+          "name": "Send School Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schoolId\": \"school_id\",\n  \"senderId\": \"sender_id\",\n  \"message\": \"School announcement\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message/school",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message", "school"]
+            },
+            "description": "Send message to school"
+          }
+        },
+        {
+          "name": "Send Student Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"student_id\",\n  \"senderId\": \"sender_id\",\n  \"message\": \"Message to student\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message/student",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message", "student"]
+            },
+            "description": "Send message to student"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat Sessions",
+      "item": [
+        {
+          "name": "Get Chat Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat-session"]
+            },
+            "description": "Get all chat sessions"
+          }
+        },
+        {
+          "name": "Get Chat Session by Client and Account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat-session/{clientId}/{accountId}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat-session", "{clientId}", "{accountId}"]
+            },
+            "description": "Get chat session by client ID and account ID"
+          }
+        }
+      ]
+    }
+  ]
+}
