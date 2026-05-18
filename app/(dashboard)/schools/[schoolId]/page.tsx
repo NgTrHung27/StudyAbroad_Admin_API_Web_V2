@@ -20,20 +20,14 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { SchoolScholarships } from "../../../../components/schools/school-scholarships";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Thông tin trường học | CANADA MEDICAL AND EDUCATION",
 };
 
 export async function generateStaticParams() {
-  const schools = await GetSchools();
-
-  if (!schools) {
-    redirect("/schools");
-  }
-
-  return schools.map((school) => ({
-    schoolId: school.id,
-  }));
+  return [];
 }
 
 type Props = {
