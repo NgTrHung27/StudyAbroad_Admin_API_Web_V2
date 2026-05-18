@@ -37,9 +37,9 @@ export async function generateStaticParams() {
 }
 
 type Props = {
-  params: Promise<{
+  params: {
     schoolId: string;
-  }>;
+  };
 };
 
 type TabItem = {
@@ -49,15 +49,14 @@ type TabItem = {
   icon: React.ReactNode | JSX.Element;
 };
 
-const SchoolIdPage = async ({ params }: Props) => {
-  const { schoolId } = await params;
+const SchoolIdPage = ({ params }: Props) => {
   const tabs: TabItem[] = [
     {
       title: "Thông tin",
       value: "info",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl shadow-md border">
-          <SchoolInformation schoolId={schoolId} />
+          <SchoolInformation schoolId={params.schoolId} />
         </div>
       ),
       icon: <InfoIcon className="size-4" />,
@@ -67,7 +66,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "students",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <StudentSchoolTable schoolId={schoolId} />
+          <StudentSchoolTable schoolId={params.schoolId} />
         </div>
       ),
       icon: <GraduationCap className="size-4" />,
@@ -77,7 +76,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "teachers",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolLocations schoolId={schoolId} />
+          <SchoolLocations schoolId={params.schoolId} />
         </div>
       ),
       icon: <HouseIcon className="size-4" />,
@@ -87,7 +86,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "courses",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolPrograms schoolId={schoolId} />
+          <SchoolPrograms schoolId={params.schoolId} />
         </div>
       ),
       icon: <IconProgress className="size-4" />,
@@ -97,7 +96,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "galleries",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolGalleries schoolId={schoolId} />
+          <SchoolGalleries schoolId={params.schoolId} />
         </div>
       ),
       icon: <IconBrandAppgallery className="size-4" />,
@@ -107,7 +106,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "scholarships",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolScholarships schoolId={schoolId} />
+          <SchoolScholarships schoolId={params.schoolId} />
         </div>
       ),
       icon: <IconStar className="size-4" />,
@@ -117,7 +116,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "news",
       content: (
         <div className="w-full overflow-y-scroll relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolNewsList schoolId={schoolId} />
+          <SchoolNewsList schoolId={params.schoolId} />
         </div>
       ),
       icon: <Newspaper className="size-4" />,
@@ -127,7 +126,7 @@ const SchoolIdPage = async ({ params }: Props) => {
       value: "supports",
       content: (
         <div className="w-full relative h-full rounded-2xl px-8 py-4 dark:text-main-foreground bg-main-foreground dark:bg-main-component">
-          <SchoolFeedbacks schoolId={schoolId} />
+          <SchoolFeedbacks schoolId={params.schoolId} />
         </div>
       ),
       icon: <IconHeadphones className="size-4" />,
@@ -137,7 +136,7 @@ const SchoolIdPage = async ({ params }: Props) => {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <SchoolWrapper schoolId={schoolId}>
+        <SchoolWrapper schoolId={params.schoolId}>
           <SchoolTabs tabs={tabs} />
         </SchoolWrapper>
       </Suspense>
