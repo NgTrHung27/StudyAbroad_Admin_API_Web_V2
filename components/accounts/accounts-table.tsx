@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AccountLib } from "@/types/auth";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale/vi";
@@ -62,6 +63,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 };
 
 export const AccountsTable = ({ accounts }: AccountsTableProps) => {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
@@ -131,7 +133,7 @@ export const AccountsTable = ({ accounts }: AccountsTableProps) => {
               <SelectItem value="DROPPED">Đã nghỉ</SelectItem>
             </SelectContent>
           </Select>
-          <Button>
+          <Button onClick={() => router.push("/accounts/create")}>
             <Plus className="mr-2 h-4 w-4" />
             Thêm tài khoản
           </Button>

@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://study-abroad-ceme-admin.vercel.app"
+      "value": "https://study-abroad-cemc-admin.vercel.app"
     }
   ],
   "auth": {

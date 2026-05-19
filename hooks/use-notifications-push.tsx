@@ -4,40 +4,51 @@ import { GetNotificationsPush } from "@/action/notification";
 import { useUser } from "@clerk/nextjs";
 import { NotificationPush } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const useNotificationsPush = () => {
   const router = useRouter();
   const { user } = useUser();
   const loading = useRef(false);
+  const hasShownError = useRef(false);
 
-  const [notifications, setNotifications] = useState<NotificationPush[]>();
+  const [notifications, setNotifications] = useState<NotificationPush[] | undefined>(undefined);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     if (!user) return;
     if (loading.current) return;
 
     loading.current = true;
+    hasShownError.current = false;
 
-    const data = await GetNotificationsPush(user.id).then((res) => {
+    try {
+      const res = await GetNotificationsPush(user.id);
+      
       if (res.error) {
-        toast.error(res.error);
-      } else {
-        return res.notifications;
+        if (!hasShownError.current) {
+          toast.error(res.error);
+          hasShownError.current = true;
+        }
+      } else if (res.notifications) {
+        setNotifications(res.notifications);
       }
-    });
-
-    if (data && data.length > 0) {
-      setNotifications(data);
+    } catch (error) {
+      console.error("Error loading notifications:", error);
+      if (!hasShownError.current) {
+        toast.error("Có lỗi xảy ra khi tải thông báo");
+        hasShownError.current = true;
+      }
+    } finally {
+      loading.current = false;
     }
-
-    loading.current = false;
-  };
+  }, [user]);
 
   useEffect(() => {
-    loadNotifications();
-  }, [user]);
+    if (user) {
+      loadNotifications();
+    }
+  }, [user, loadNotifications]);
 
   return { notifications, loadNotifications };
 };
