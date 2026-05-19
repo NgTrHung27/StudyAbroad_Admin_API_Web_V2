@@ -49,19 +49,19 @@ async function main() {
         "phoneNumber", "idCardNumber", address, image, "isLocked", 
         "isTwoFactorEnabled", "createdAt", "updatedAt"
       ) VALUES 
-        (gen_random_uuid(), 'admin@cemc.com', NULL, $1, 'Admin CEMC', '1990-01-15', 'MALE', 
+        (gen_random_uuid(), 'admin@cemc.com', NOW(), $1, 'Admin CEMC', '1990-01-15', 'MALE', 
          '0909123456', '123456789012', '123 Admin Street, District 1, Ho Chi Minh City', 
          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200', false, false, NOW(), NOW()),
-        (gen_random_uuid(), 'student1@test.com', NULL, $1, 'Nguyen Van A', '2005-06-20', 'MALE', 
+        (gen_random_uuid(), 'student1@test.com', NOW(), $1, 'Nguyen Van A', '2005-06-20', 'MALE', 
          '0909123457', '123456789013', '456 Student Ave, District 3, Ho Chi Minh City', 
          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200', false, false, NOW(), NOW()),
-        (gen_random_uuid(), 'student2@test.com', NULL, $1, 'Tran Thi B', '2006-03-10', 'FEMALE', 
+        (gen_random_uuid(), 'student2@test.com', NOW(), $1, 'Tran Thi B', '2006-03-10', 'FEMALE', 
          '0909123458', '123456789014', '789 Student Blvd, District 5, Ho Chi Minh City', 
          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200', false, false, NOW(), NOW()),
-        (gen_random_uuid(), 'student3@test.com', NULL, $1, 'Le Van C', '2005-09-25', 'MALE', 
+        (gen_random_uuid(), 'student3@test.com', NOW(), $1, 'Le Van C', '2005-09-25', 'MALE', 
          '0909123459', '123456789015', '321 Student Rd, District 7, Ho Chi Minh City', 
          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200', false, false, NOW(), NOW()),
-        (gen_random_uuid(), 'student4@test.com', NULL, $1, 'Pham Thi D', '2006-01-05', 'FEMALE', 
+        (gen_random_uuid(), 'student4@test.com', NOW(), $1, 'Pham Thi D', '2006-01-05', 'FEMALE', 
          '0909123460', '123456789016', '654 Student Lane, District 2, Ho Chi Minh City', 
          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200', false, false, NOW(), NOW())
       ON CONFLICT (email) DO NOTHING
