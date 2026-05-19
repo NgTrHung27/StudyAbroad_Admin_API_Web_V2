@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { clerkClient } from "@clerk/nextjs";
-import { StudentStatus } from "@prisma/client";
+import { StudentStatus, DegreeType, CertificateType, GradeType, Gender } from "@prisma/client";
 
 export const createAccount = async (data: {
   email: string;
@@ -12,6 +11,7 @@ export const createAccount = async (data: {
   dob?: Date;
   address?: string;
   idCardNumber?: string;
+  gender?: Gender;
   studentCode?: string;
   status?: StudentStatus;
 }) => {
@@ -24,31 +24,28 @@ export const createAccount = async (data: {
       return { error: "Email đã được sử dụng" };
     }
 
-    const user = await clerkClient.users.createUser({
-      emailAddress: [data.email],
-      username: data.email.split("@")[0],
-      firstName: data.name.split(" ")[0],
-      lastName: data.name.split(" ").slice(1).join(" ") || undefined,
-      publicMetadata: {
-        role: "STUDENT",
-      },
-    });
-
     const account = await db.account.create({
       data: {
-        id: user.id,
         email: data.email,
         name: data.name,
+        password: data.password || "",
         phoneNumber: data.phoneNumber || "",
         dob: data.dob || new Date(),
         address: data.address || "",
         idCardNumber: data.idCardNumber || "",
+        gender: data.gender || Gender.MALE,
         emailVerified: new Date(),
         student: data.studentCode
           ? {
               create: {
                 studentCode: data.studentCode,
                 status: data.status || StudentStatus.AWAITING,
+                degreeType: DegreeType.HIGHSCHOOL,
+                certificateType: CertificateType.IELTS,
+                certificateImg: "",
+                gradeType: GradeType.GPA,
+                gradeScore: 0,
+                schoolId: "",
               },
             }
           : undefined,
@@ -105,8 +102,6 @@ export const updateAccount = async (
 
 export const deleteAccount = async (id: string) => {
   try {
-    await clerkClient.users.deleteUser(id);
-
     await db.student.deleteMany({
       where: { accountId: id },
     });

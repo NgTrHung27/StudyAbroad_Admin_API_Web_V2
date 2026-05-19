@@ -34,9 +34,7 @@ const nextConfig = {
       { hostname: "api.microlink.io" },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ["ably"],
-  },
+  serverExternalPackages: ["ably"],
 };
 
 export default nextConfig;
