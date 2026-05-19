@@ -14,7 +14,6 @@ import {
   SchoolScholarshipImage,
   Student,
 } from "@prisma/client";
-import { AccelerateInfo } from "@prisma/extension-accelerate";
 
 export type SchoolFeedbackReply = Feedback & {
   replies: FeedbackReply[];
@@ -87,8 +86,3 @@ export type SchoolData = (School & {
     }[];
   })[];
 })[];
-
-export type SchoolLib = {
-  data: SchoolData;
-  info: AccelerateInfo | null;
-};
