@@ -1,4 +1,5 @@
 import { responses } from "@/lib/api-response";
+import { NextResponse } from "next/server";
 import { ChatSupportSchema } from "@/data/form-schema";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
