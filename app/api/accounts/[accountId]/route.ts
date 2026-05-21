@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 /**
  * API để lấy các ID từ accountId
@@ -9,10 +9,14 @@ import { NextResponse } from "next/server";
  * 
  * Response:
  * {
- *   accountId,    → Dùng cho /api/notifications/{accountId}
- *   studentId,     → Dùng cho message APIs (studentCode)
- *   profileId,     → Dùng cho /api/profile/{profileId}
- *   studentCode,   → Dùng cho /api/message/student?studentCode=x
+ *   "statusCode": 200,
+ *   "message": "Success",
+ *   "data": {
+ *     accountId,    → Dùng cho /api/notifications/{accountId}
+ *     studentId,     → Dùng cho message APIs (studentCode)
+ *     profileId,     → Dùng cho /api/profile/{profileId}
+ *     studentCode,   → Dùng cho /api/message/student?studentCode=x
+ *   }
  * }
  */
 export async function GET(
@@ -23,10 +27,7 @@ export async function GET(
     const { accountId } = params;
 
     if (!accountId) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp accountId" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp accountId");
     }
 
     const account = await db.account.findUnique({
@@ -51,13 +52,10 @@ export async function GET(
     });
 
     if (!account) {
-      return NextResponse.json(
-        { error: "Không tìm thấy tài khoản" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy tài khoản");
     }
 
-    return NextResponse.json({
+    return responses.ok({
       accountId: account.id,
       email: account.email,
       name: account.name,
@@ -67,10 +65,7 @@ export async function GET(
       schoolId: account.student?.schoolId || null,
     });
   } catch (error) {
-    console.error("Error getting account info:", error);
-    return NextResponse.json(
-      { error: "Lỗi lấy thông tin tài khoản" },
-      { status: 500 }
-    );
+    console.error("[GET ACCOUNT ERROR]", error);
+    return responses.serverError("Lỗi lấy thông tin tài khoản");
   }
 }

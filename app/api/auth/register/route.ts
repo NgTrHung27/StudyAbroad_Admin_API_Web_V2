@@ -1,10 +1,10 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
 import { RegisterSchema } from "@/types/auth";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -14,10 +14,7 @@ export async function POST(req: Request) {
     const validatedFields = RegisterSchema.safeParse(body);
 
     if (!validatedFields.success) {
-      return NextResponse.json(
-        { error: validatedFields.error.issues },
-        { status: 406 }
-      );
+      return responses.badRequest("Trường dữ liệu không hợp lệ", 406);
     }
 
     const {
@@ -43,59 +40,34 @@ export async function POST(req: Request) {
     } = validatedFields.data;
 
     const exisitingAccountEmail = await db.account.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     const exisitingAccountIdCard = await db.account.findUnique({
-      where: {
-        idCardNumber,
-      },
+      where: { idCardNumber },
     });
 
     if (exisitingAccountEmail) {
-      return NextResponse.json(
-        { error: "Email đã được sử dụng" },
-        { status: 403 }
-      );
+      return responses.conflict("Email đã được sử dụng");
     }
 
     if (exisitingAccountIdCard) {
-      return NextResponse.json(
-        { error: "Căn cước công dân đã được sử dụng" },
-        { status: 403 }
-      );
+      return responses.conflict("Căn cước công dân đã được sử dụng");
     }
 
-    let hashedPassword = "";
-
-    if (password && confirmPassword) {
-      const passwordMatch = password === confirmPassword;
-
-      if (!passwordMatch) {
-        return NextResponse.json(
-          { error: "Mật khẩu không trùng khớp!" },
-          { status: 406 }
-        );
-      }
-
-      hashedPassword = await bcrypt.hash(password, 10);
+    if (password && confirmPassword && password !== confirmPassword) {
+      return responses.badRequest("Mật khẩu không trùng khớp", 406);
     }
 
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : "";
     const address = `${addressLine}, ${ward}, ${district}, ${city}`;
 
     const existingSchool = await db.school.findUnique({
-      where: {
-        name: schoolName,
-      },
+      where: { name: schoolName },
     });
 
     if (!existingSchool) {
-      return NextResponse.json(
-        { error: "Không tìm thấy trường học!" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy trường học");
     }
 
     const existingProgram = await db.schoolProgram.findUnique({
@@ -108,10 +80,7 @@ export async function POST(req: Request) {
     });
 
     if (!existingProgram) {
-      return NextResponse.json(
-        { error: "Không tìm thấy ngành đào tạo!" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy ngành đào tạo");
     }
 
     const account = await db.account.create({
@@ -159,33 +128,21 @@ export async function POST(req: Request) {
       verificationToken.token
     );
 
-    return NextResponse.json(
-      {
-        account,
-        message:
-          "Đăng ký thành công, vui lòng check hòm thư email để xác thực người dùng",
-      },
-      { status: 200 }
+    return responses.created(
+      { account },
+      "Đăng ký thành công, vui lòng check hòm thư email để xác thực người dùng"
     );
   } catch (error) {
-    console.log("REGISTER ERROR", error);
+    console.error("[REGISTER ERROR]", error);
 
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        return NextResponse.json(
-          { error: "Căn cước công dân đã được sử dụng" },
-          { status: 400 }
-        );
-      }
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+      return responses.conflict("Căn cước công dân đã được sử dụng");
     }
 
     if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: "Định dạng JSON không hợp lệ" },
-        { status: 406 }
-      );
+      return responses.badRequest("Định dạng JSON không hợp lệ");
     }
 
-    return NextResponse.json({ error: "Đăng ký thất bại" }, { status: 500 });
+    return responses.serverError("Đăng ký thất bại");
   }
 }

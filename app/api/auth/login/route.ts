@@ -1,64 +1,40 @@
+import { responses } from "@/lib/api-response";
 import { GetAccountByEmail } from "@/lib/account";
 import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
 import { LoginSchema } from "@/types/auth";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  console.log("[LOGIN API] Request received:", new Date().toISOString());
-
   try {
     const body = await req.json();
-    console.log("[LOGIN API] Body:", JSON.stringify({ ...body, password: "***" }));
 
     const validatedFields = LoginSchema.safeParse(body);
 
     if (!validatedFields.success) {
-      console.log("[LOGIN API] Validation failed:", validatedFields.error);
-      return NextResponse.json(
-        { error: "Trường dữ liệu không hợp lệ" },
-        { status: 406 }
-      );
+      return responses.badRequest("Trường dữ liệu không hợp lệ");
     }
 
     const { email, password } = validatedFields.data;
-    console.log("[LOGIN API] Email:", email);
 
     const existingAccount = await GetAccountByEmail(email!);
-    console.log("[LOGIN API] Account found:", existingAccount ? "YES" : "NO");
 
     if (!existingAccount) {
-      console.log("[LOGIN API] User does not exist with email:", email);
-      return NextResponse.json(
-        { error: "Không tồn tại người dùng" },
-        { status: 401 }
-      );
+      return responses.unauthorized("Không tồn tại người dùng");
     }
 
     if (existingAccount.isLocked) {
-      return NextResponse.json(
-        { error: "Tài khoản của bạn đã bị khóa" },
-        { status: 403 }
-      );
+      return responses.forbidden("Tài khoản của bạn đã bị khóa");
     }
 
-    const isPasswordMatch = await bcrypt.compare(
-      password,
-      existingAccount.password
-    );
+    const isPasswordMatch = await bcrypt.compare(password, existingAccount.password);
 
     if (!isPasswordMatch) {
-      return NextResponse.json(
-        { error: "Thông tin tài khoản không chính xác" },
-        { status: 403 }
-      );
+      return responses.forbidden("Thông tin tài khoản không chính xác");
     }
 
     if (!existingAccount.emailVerified) {
-      const verificationToken = await generateVerificationToken(
-        existingAccount.email
-      );
+      const verificationToken = await generateVerificationToken(existingAccount.email);
 
       await sendVerificationEmail(
         existingAccount.name,
@@ -67,18 +43,12 @@ export async function POST(req: Request) {
         verificationToken.token
       );
 
-      return NextResponse.json(
-        {
-          error:
-            "Email chưa xác thực, vui lòng kiểm tra hộp thư để được xác thực",
-        },
-        { status: 403 }
-      );
+      return responses.forbidden("Email chưa xác thực, vui lòng kiểm tra hộp thư để được xác thực");
     }
 
-    return NextResponse.json(existingAccount, { status: 200 });
+    return responses.ok(existingAccount);
   } catch (error) {
-    console.log("ERROR LOGIN:", error);
-    return NextResponse.json({ error: "LOGIN ERROR" }, { status: 500 });
+    console.error("[LOGIN ERROR]", error);
+    return responses.serverError("Đăng nhập thất bại");
   }
 }

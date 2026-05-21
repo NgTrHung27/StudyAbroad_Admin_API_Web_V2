@@ -1,16 +1,14 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
   { params }: { params: { newsId: string } }
 ) {
   try {
-    if (!params.newsId)
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp mã ID của tin tức" },
-        { status: 406 }
-      );
+    if (!params.newsId) {
+      return responses.badRequest("Vui lòng cung cấp mã ID của tin tức");
+    }
 
     const existingNews = await db.news.findUnique({
       where: {
@@ -26,19 +24,12 @@ export async function GET(
     });
 
     if (!existingNews) {
-      return NextResponse.json(
-        { error: "Không tìm thấy tin tức với ID cung cấp" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy tin tức với ID cung cấp");
     }
 
-    return NextResponse.json(existingNews, { status: 200 });
+    return responses.ok(existingNews);
   } catch (error) {
-    console.log("ERROR API GET NEWS BY ID", error);
-
-    return NextResponse.json(
-      { error: "Lỗi lấy tin tức theo id" },
-      { status: 500 }
-    );
+    console.error("[GET NEWS BY ID ERROR]", error);
+    return responses.serverError("Lỗi lấy tin tức theo id");
   }
 }

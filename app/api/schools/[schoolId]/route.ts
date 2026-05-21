@@ -1,6 +1,6 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 import { GetSchoolsByIdApi } from "@/lib/schools";
-import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -8,19 +8,13 @@ export async function GET(
 ) {
   try {
     if (!params.schoolId) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp mã ID của trường" },
-        { status: 406 }
-      );
+      return responses.badRequest("Vui lòng cung cấp mã ID của trường");
     }
 
     const existingSchool = await GetSchoolsByIdApi(params.schoolId);
 
     if (!existingSchool) {
-      return NextResponse.json(
-        { error: "Không tìm thấy trường với ID cung cấp" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy trường với ID cung cấp");
     }
 
     const school = await db.school.findUnique({
@@ -29,11 +23,9 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(school, { status: 200 });
+    return responses.ok(school);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy thông tin trường theo ID" },
-      { status: 500 }
-    );
+    console.error("[GET SCHOOL BY ID ERROR]", error);
+    return responses.serverError("Lỗi lấy thông tin trường theo ID");
   }
 }

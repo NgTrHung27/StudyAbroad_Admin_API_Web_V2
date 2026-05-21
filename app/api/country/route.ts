@@ -1,16 +1,12 @@
+import { responses } from "@/lib/api-response";
 import { DataCountries } from "@/lib/country";
-import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const countries = DataCountries;
-
-    return NextResponse.json(countries, { status: 200 });
+    return responses.ok(countries);
   } catch (error) {
-    console.log("GET COUNTRY ERROR", error);
-    return NextResponse.json(
-      { error: "Lấy thông tin địa chỉ thất bại" },
-      { status: 500 }
-    );
+    console.error("[GET COUNTRY ERROR]", error);
+    return responses.serverError("Lấy thông tin địa chỉ thất bại");
   }
 }

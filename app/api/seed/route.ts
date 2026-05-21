@@ -1,3 +1,4 @@
+import { responses } from "@/lib/api-response";
 import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
@@ -29,7 +30,6 @@ export async function POST() {
 
     const hashedPassword = await bcrypt.hash("Test123456", 12);
 
-    // Create test accounts
     const result = await safeInsert(client, `
       INSERT INTO "Account" (
         id, email, "emailVerified", password, name, dob, gender, 
@@ -46,16 +46,15 @@ export async function POST() {
 
     await client.end();
 
-    return Response.json({ 
-      success: true, 
-      message: `Created ${result.count} accounts`,
+    return responses.created({
+      success: true,
       credentials: {
         admin: 'admin@cemc.com / Test123456',
         student: 'student1@test.com / Test123456'
       }
-    });
+    }, `Created ${result.count} accounts`);
   } catch (error: any) {
-    console.error("Seed error:", error);
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+    console.error("[SEED ERROR]", error);
+    return responses.serverError(error.message);
   }
 }

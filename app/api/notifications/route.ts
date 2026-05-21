@@ -1,8 +1,8 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 import admin from "firebase-admin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   try {
     const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64
@@ -19,84 +19,62 @@ if (!admin.apps.length) {
 }
 
 export async function POST(request: NextRequest) {
-  const { userId, token } = await request.json();
-
   try {
-    if (userId) {
-      const existingToken = await db.notificationToken.findFirst({
-        where: {
-          userId,
-        },
-      });
+    const { userId, token } = await request.json();
 
-      if (existingToken) {
-        await db.notificationToken.update({
-          where: {
-            id: existingToken.id,
-          },
-          data: {
-            token,
-          },
-        });
-      } else {
-        const payload = {
-          token,
-          notification: {
-            title: "Welcome to CEMC",
-            body: "You will now receive notifications from CEMC",
-          },
-          android: {
-            notification: {
-              clickAction: "FLUTTER_NOTIFICATION_CLICK",
-            },
-          },
-          apns: {
-            payload: {
-              aps: {
-                category: "CEMC",
-              },
-            },
-          },
-        };
+    if (!userId) {
+      return responses.badRequest("Vui lòng đăng nhập để nhận được thông báo");
+    }
 
-        try {
-          await admin.messaging().send(payload);
-        } catch (fcmError) {
-          console.warn("FCM send failed:", fcmError);
-        }
+    const existingToken = await db.notificationToken.findFirst({
+      where: { userId },
+    });
 
-        await db.notificationToken.create({
-          data: {
-            token,
-            userId,
-          },
-        });
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: "Cập nhật token thông báo thành công",
+    if (existingToken) {
+      await db.notificationToken.update({
+        where: { id: existingToken.id },
+        data: { token },
       });
     } else {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Vui lòng đăng nhập để nhận được thông báo",
+      const payload = {
+        token,
+        notification: {
+          title: "Welcome to CEMC",
+          body: "You will now receive notifications from CEMC",
         },
-        { status: 400 }
-      );
+        android: {
+          notification: {
+            clickAction: "FLUTTER_NOTIFICATION_CLICK",
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              category: "CEMC",
+            },
+          },
+        },
+      };
+
+      try {
+        await admin.messaging().send(payload);
+      } catch (fcmError) {
+        console.warn("FCM send failed:", fcmError);
+      }
+
+      await db.notificationToken.create({
+        data: { token, userId },
+      });
     }
+
+    return responses.ok(null, "Cập nhật token thông báo thành công");
   } catch (error) {
-    console.log("ERROR UPDATE TOKEN", error);
+    console.error("[UPDATE TOKEN ERROR]", error);
+
     if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { success: false, message: "Định dạng JSON không hợp lệ" },
-        { status: 400 }
-      );
+      return responses.badRequest("Định dạng JSON không hợp lệ");
     }
-    return NextResponse.json(
-      { success: false, message: "Lỗi cập nhật token thông báo" },
-      { status: 500 }
-    );
+
+    return responses.serverError("Lỗi cập nhật token thông báo");
   }
 }

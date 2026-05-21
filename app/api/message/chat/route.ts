@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -7,10 +7,7 @@ export async function GET(req: Request) {
     const chatId = searchParams.get("chatId");
 
     if (!chatId) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp chatId" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp chatId");
     }
 
     const messages = await db.message.findMany({
@@ -32,12 +29,10 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(messages, { status: 200 });
+    return responses.ok(messages);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy tin nhắn" },
-      { status: 500 }
-    );
+    console.error("[GET MESSAGES ERROR]", error);
+    return responses.serverError("Lỗi lấy tin nhắn");
   }
 }
 
@@ -47,10 +42,7 @@ export async function POST(req: Request) {
     const { chatId, studentCode, content } = body;
 
     if (!chatId || !studentCode || !content) {
-      return NextResponse.json(
-        { error: "Thiếu thông tin cần thiết" },
-        { status: 400 }
-      );
+      return responses.badRequest("Thiếu thông tin cần thiết: chatId, studentCode, content");
     }
 
     const message = await db.message.create({
@@ -75,11 +67,9 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(message, { status: 200 });
+    return responses.created(message, "Gửi tin nhắn thành công");
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi gửi tin nhắn" },
-      { status: 500 }
-    );
+    console.error("[SEND MESSAGE ERROR]", error);
+    return responses.serverError("Lỗi gửi tin nhắn");
   }
 }

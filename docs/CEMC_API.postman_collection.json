@@ -1,0 +1,709 @@
+{
+  "info": {
+    "name": "CEMC Study Abroad Admin API",
+    "description": "API Documentation for CEMC Study Abroad Admin Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://study-abroad-cemc-admin.vercel.app",
+      "type": "string"
+    },
+    {
+      "key": "apiProduction",
+      "value": "https://study-abroad-cemc-admin.vercel.app/api",
+      "type": "string"
+    },
+    {
+      "key": "apiDevelopment",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "accountId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentCode",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "profileId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "schoolId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "clientId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "newsId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@cemc.com\",\n    \"password\": \"Test123456\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/login",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with email and password"
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@test.com\",\n    \"password\": \"Test123456\",\n    \"confirmPassword\": \"Test123456\",\n    \"name\": \"Nguyen Van A\",\n    \"gender\": \"MALE\",\n    \"dob\": \"2005-06-20\",\n    \"phoneNumber\": \"0909123457\",\n    \"idCardNumber\": \"123456789013\",\n    \"addressLine\": \"456 Student Ave\",\n    \"city\": \"Ho Chi Minh City\",\n    \"district\": \"District 1\",\n    \"ward\": \"Ward 1\",\n    \"schoolName\": \"University of Sydney\",\n    \"programName\": \"Computer Science\",\n    \"degreeType\": \"HIGHSCHOOL\",\n    \"certificateType\": \"IELTS\",\n    \"gradeType\": \"GPA\",\n    \"gradeScore\": \"8.5\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/register",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register new account"
+          },
+          "response": []
+        },
+        {
+          "name": "Email Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"verification_token_from_email\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/new-verification",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "new-verification"]
+            },
+            "description": "Verify email with token"
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/reset-password",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "reset-password"]
+            },
+            "description": "Request password reset"
+          },
+          "response": []
+        },
+        {
+          "name": "New Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\": \"NewPassword123\",\n    \"confirmPassword\": \"NewPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/new-password/{{token}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "new-password", "{{token}}"]
+            },
+            "description": "Set new password with token"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"UserPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/auth/delete",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "delete"]
+            },
+            "description": "Delete account with email and password"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Schools",
+      "item": [
+        {
+          "name": "Get All Schools",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/schools",
+              "host": ["{{apiProduction}}"],
+              "path": ["schools"]
+            },
+            "description": "Get all published schools"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Schools Full",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/schools/full",
+              "host": ["{{apiProduction}}"],
+              "path": ["schools", "full"]
+            },
+            "description": "Get all schools with full info"
+          },
+          "response": []
+        },
+        {
+          "name": "Get School by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/schools/{{schoolId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["schools", "{{schoolId}}"]
+            },
+            "description": "Get school by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get School Names",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/nameSchools",
+              "host": ["{{apiProduction}}"],
+              "path": ["nameSchools"]
+            },
+            "description": "Get school names list"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Schools (Auth)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/auth/schools",
+              "host": ["{{apiProduction}}"],
+              "path": ["auth", "schools"]
+            },
+            "description": "Get schools with locations and programs"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "Get Account Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/accounts/{{accountId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["accounts", "{{accountId}}"]
+            },
+            "description": "Get account info including profileId, studentCode, etc."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/profile/{{profileId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["profile", "{{profileId}}"]
+            },
+            "description": "Get profile by profileId"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile Bio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/profile/Bio?profileId={{profileId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["profile", "Bio"],
+              "query": [
+                {
+                  "key": "profileId",
+                  "value": "{{profileId}}"
+                }
+              ]
+            },
+            "description": "Get profile biography and socials"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "item": [
+        {
+          "name": "Get All News",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/news",
+              "host": ["{{apiProduction}}"],
+              "path": ["news"]
+            },
+            "description": "Get all news"
+          },
+          "response": []
+        },
+        {
+          "name": "Get News by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/news/{{newsId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["news", "{{newsId}}"]
+            },
+            "description": "Get news by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Feedbacks",
+      "item": [
+        {
+          "name": "Get All Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/feedbacks",
+              "host": ["{{apiProduction}}"],
+              "path": ["feedbacks"]
+            },
+            "description": "Get all feedbacks"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Feedback content\",\n    \"schoolId\": \"{{schoolId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/feedbacks",
+              "host": ["{{apiProduction}}"],
+              "path": ["feedbacks"]
+            },
+            "description": "Create new feedback"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/notifications/{{accountId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["notifications", "{{accountId}}"]
+            },
+            "description": "Get notifications by account ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{accountId}}\",\n    \"token\": \"fcm_token\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/notifications",
+              "host": ["{{apiProduction}}"],
+              "path": ["notifications"]
+            },
+            "description": "Send push notification"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chat Support",
+      "item": [
+        {
+          "name": "Create Chat Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"clientId\": \"device_unique_id\",\n    \"userId\": \"{{accountId}}\",\n    \"name\": \"Test User\",\n    \"email\": \"user@example.com\",\n    \"phone\": \"0909123456\",\n    \"message\": \"Hello, I need help\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/chat-session",
+              "host": ["{{apiProduction}}"],
+              "path": ["chat-session"]
+            },
+            "description": "Create or update chat session"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Chat Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/chat-session/{{clientId}}/{{accountId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["chat-session", "{{clientId}}", "{{accountId}}"]
+            },
+            "description": "Get chat session history"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Chat Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/chat-session/{{clientId}}/{{accountId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["chat-session", "{{clientId}}", "{{accountId}}"]
+            },
+            "description": "Delete chat session"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Get Messages by Chat ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/message/chat?chatId={{chatId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "chat"],
+              "query": [
+                {
+                  "key": "chatId",
+                  "value": "{{chatId}}"
+                }
+              ]
+            },
+            "description": "Get messages in a chat"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"chatId\": \"{{chatId}}\",\n    \"studentCode\": \"{{studentCode}}\",\n    \"content\": \"Hello, this is a message\"\n}"
+            },
+            "url": {
+              "raw": "{{apiProduction}}/message/chat",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "chat"]
+            },
+            "description": "Send message in chat"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Private Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/message/private?studentCode={{studentCode}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "private"],
+              "query": [
+                {
+                  "key": "studentCode",
+                  "value": "{{studentCode}}"
+                }
+              ]
+            },
+            "description": "Get private messages by student code"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Group Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/message/group?groupId={{chatId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "group"],
+              "query": [
+                {
+                  "key": "groupId",
+                  "value": "{{chatId}}"
+                }
+              ]
+            },
+            "description": "Get group messages by chat ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get School Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/message/school?schoolId={{schoolId}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "school"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "{{schoolId}}"
+                }
+              ]
+            },
+            "description": "Get school messages"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/message/student?studentCode={{studentCode}}",
+              "host": ["{{apiProduction}}"],
+              "path": ["message", "student"],
+              "query": [
+                {
+                  "key": "studentCode",
+                  "value": "{{studentCode}}"
+                }
+              ]
+            },
+            "description": "Get student chat list"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Country",
+      "item": [
+        {
+          "name": "Get All Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/country",
+              "host": ["{{apiProduction}}"],
+              "path": ["country"]
+            },
+            "description": "Get all countries"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Check Database",
+      "item": [
+        {
+          "name": "Check DB Connection",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/check-db",
+              "host": ["{{apiProduction}}"],
+              "path": ["check-db"]
+            },
+            "description": "Check database connection"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Seed (Development)",
+      "item": [
+        {
+          "name": "Seed Users",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/seed",
+              "host": ["{{apiProduction}}"],
+              "path": ["seed"]
+            },
+            "description": "Seed test users (admin@cemc.com, student1@test.com)"
+          },
+          "response": []
+        },
+        {
+          "name": "Seed Chat Data",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{apiProduction}}/seed-chat",
+              "host": ["{{apiProduction}}"],
+              "path": ["seed-chat"]
+            },
+            "description": "Seed test chat data"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

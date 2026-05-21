@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -7,10 +7,7 @@ export async function GET(req: Request) {
     const schoolId = searchParams.get("schoolId");
 
     if (!schoolId) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp schoolId" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp schoolId");
     }
 
     const students = await db.student.findMany({
@@ -41,11 +38,9 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(students, { status: 200 });
+    return responses.ok(students);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy tin nhắn trường" },
-      { status: 500 }
-    );
+    console.error("[GET SCHOOL MESSAGES ERROR]", error);
+    return responses.serverError("Lỗi lấy tin nhắn trường");
   }
 }
