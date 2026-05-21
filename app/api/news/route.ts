@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export const revalidate = 0;
 
@@ -18,16 +18,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(news, {
-      status: 200,
-      headers: { "Cache-Control": "no-store" },
-    });
+    return responses.ok(news);
   } catch (error) {
-    console.log("ERROR API GET NEWS", error);
-
-    return NextResponse.json(
-      { error: "Lỗi lấy thông tin tin tức" },
-      { status: 500 }
-    );
+    console.error("[GET NEWS ERROR]", error);
+    return responses.serverError("Lỗi lấy thông tin tin tức");
   }
 }

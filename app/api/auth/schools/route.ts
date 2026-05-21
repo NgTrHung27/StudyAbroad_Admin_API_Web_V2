@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -42,13 +42,9 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json({ schools }, { status: 200 });
+    return responses.ok({ schools });
   } catch (error) {
-    console.log("GET SCHOOLS API ERROR", error);
-
-    return NextResponse.json(
-      { error: "Lỗi lấy danh sách trường học" },
-      { status: 500 }
-    );
+    console.error("[GET SCHOOLS API ERROR]", error);
+    return responses.serverError("Lỗi lấy danh sách trường học");
   }
 }

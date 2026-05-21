@@ -1,3 +1,4 @@
+import { responses } from "@/lib/api-response";
 import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
@@ -19,19 +20,6 @@ async function safeInsert(client: pg.Client, query: string, params: any[] = []) 
 
 /**
  * Seed Chat Data - Tạo dữ liệu chat để test
- * 
- * Gọi: POST /api/seed-chat
- * 
- * Response:
- * {
- *   success: true,
- *   credentials: {
- *     adminAccountId,      → Dùng cho notifications
- *     studentAccountId,    → Dùng cho notifications
- *     studentCode,         → Dùng cho message/student
- *     clientId,            → Dùng cho chat-session
- *   }
- * }
  */
 export async function POST() {
   try {
@@ -43,7 +31,6 @@ export async function POST() {
     await client.connect();
     console.log("Connected to database");
 
-    // Lấy account admin và student
     const adminAccount = await client.query(
       `SELECT id FROM "Account" WHERE email = 'admin@cemc.com' LIMIT 1`
     );
@@ -53,24 +40,19 @@ export async function POST() {
 
     if (adminAccount.rows.length === 0 || studentAccount.rows.length === 0) {
       await client.end();
-      return Response.json({ 
-        success: false, 
-        error: "Vui lòng chạy /api/seed trước để tạo users" 
-      }, { status: 400 });
+      return responses.notFound("Vui lòng chạy /api/seed trước để tạo users");
     }
 
     const adminId = adminAccount.rows[0].id;
     const studentId = studentAccount.rows[0].id;
 
-    // Tạo chat session cho admin
-    const chatSessionResult = await safeInsert(client, `
+    await safeInsert(client, `
       INSERT INTO "ChatSupport" (id, "clientId", name, email, "userId", "createdAt", "updatedAt")
       VALUES (gen_random_uuid(), 'client_admin_001', 'Admin Chat', 'admin@cemc.com', $1, NOW(), NOW())
       ON CONFLICT ("clientId") DO UPDATE SET "updatedAt" = NOW()
       RETURNING id, "clientId"
     `, [adminId]);
 
-    // Tạo một số messages
     await safeInsert(client, `
       INSERT INTO "ChatSupportMessage" (id, message, role, "chatSessionId", "createdAt", "updatedAt")
       SELECT 
@@ -90,7 +72,6 @@ export async function POST() {
       WHERE cs."clientId" = 'client_admin_001'
     `);
 
-    // Tạo chat giữa students
     const chatResult = await safeInsert(client, `
       INSERT INTO "Chat" (id, name, "creatAt", "updateAt")
       VALUES (gen_random_uuid(), 'Group Du Học Australia', NOW(), NOW())
@@ -100,7 +81,6 @@ export async function POST() {
 
     const chatId = chatResult.success ? chatResult.error || '' : '';
 
-    // Add students to chat
     await safeInsert(client, `
       INSERT INTO "_ChatToStudent" ("A", "B")
       SELECT cs.id, s.id
@@ -113,9 +93,8 @@ export async function POST() {
 
     await client.end();
 
-    return Response.json({ 
-      success: true, 
-      message: "Chat data seeded successfully",
+    return responses.created({
+      success: true,
       credentials: {
         adminAccountId: adminId,
         studentId: studentId,
@@ -129,9 +108,9 @@ export async function POST() {
         messageGroup: `/api/message/group?groupId=${chatId}`,
         profile: `/api/profile/Bio?profileId=<profileId>`,
       }
-    });
+    }, "Chat data seeded successfully");
   } catch (error: any) {
-    console.error("Seed chat error:", error);
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+    console.error("[SEED CHAT ERROR]", error);
+    return responses.serverError(error.message);
   }
 }

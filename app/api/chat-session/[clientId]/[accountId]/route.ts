@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -7,18 +7,14 @@ export async function GET(
 ) {
   try {
     if (!params.clientId && !params.accountId) {
-      return NextResponse.json(null, { status: 404 });
+      return responses.notFound("Thiếu thông tin phiên chat");
     }
 
     const chatSession = await db.chatSession.findFirst({
       where: {
         OR: [
-          {
-            clientId: params.clientId,
-          },
-          {
-            userId: params.accountId,
-          },
+          { clientId: params.clientId },
+          { userId: params.accountId },
         ],
       },
       include: {
@@ -30,14 +26,13 @@ export async function GET(
     });
 
     if (!chatSession) {
-      return NextResponse.json(null, { status: 404 });
+      return responses.notFound("Không tìm thấy phiên chat");
     }
 
-    return NextResponse.json(chatSession);
+    return responses.ok(chatSession);
   } catch (error) {
-    console.log("ERROR GET /api/chat-session/:clientId", error);
-
-    return NextResponse.json({ error: "Lỗi không xác định" }, { status: 500 });
+    console.error("[GET CHAT SESSION ERROR]", error);
+    return responses.serverError("Lỗi không xác định");
   }
 }
 
@@ -47,36 +42,29 @@ export async function DELETE(
 ) {
   try {
     if (!params.clientId && !params.accountId) {
-      return NextResponse.json(null, { status: 404 });
+      return responses.notFound("Thiếu thông tin phiên chat");
     }
 
     const chatSession = await db.chatSession.findFirst({
       where: {
         OR: [
-          {
-            clientId: params.clientId,
-          },
-          {
-            userId: params.accountId,
-          },
+          { clientId: params.clientId },
+          { userId: params.accountId },
         ],
       },
     });
 
     if (!chatSession) {
-      return NextResponse.json(null, { status: 404 });
+      return responses.notFound("Không tìm thấy phiên chat");
     }
 
     await db.chatSessionMessage.deleteMany({
-      where: {
-        chatSessionId: chatSession.id,
-      },
+      where: { chatSessionId: chatSession.id },
     });
 
-    return NextResponse.json(null, { status: 200 });
+    return responses.ok(null, "Xóa phiên chat thành công");
   } catch (error) {
-    console.log("ERROR DELETE /api/chat-session/:clientId", error);
-
-    return NextResponse.json({ error: "Lỗi không xác định" }, { status: 500 });
+    console.error("[DELETE CHAT SESSION ERROR]", error);
+    return responses.serverError("Lỗi không xác định");
   }
 }

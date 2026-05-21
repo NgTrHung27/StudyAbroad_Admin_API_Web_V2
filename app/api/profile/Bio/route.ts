@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -7,10 +7,7 @@ export async function GET(req: Request) {
     const profileId = searchParams.get("profileId");
 
     if (!profileId) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp profileId" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp profileId");
     }
 
     const profile = await db.profile.findFirst({
@@ -46,17 +43,12 @@ export async function GET(req: Request) {
     });
 
     if (!profile) {
-      return NextResponse.json(
-        { error: "Không tìm thấy profile" },
-        { status: 404 }
-      );
+      return responses.notFound("Không tìm thấy profile");
     }
 
-    return NextResponse.json(profile, { status: 200 });
+    return responses.ok(profile);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy thông tin bio" },
-      { status: 500 }
-    );
+    console.error("[GET PROFILE BIO ERROR]", error);
+    return responses.serverError("Lỗi lấy thông tin bio");
   }
 }

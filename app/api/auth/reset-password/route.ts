@@ -1,8 +1,8 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { generatePasswordResetToken } from "@/lib/tokens";
 import { ResetSchema } from "@/types/auth";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -11,30 +11,20 @@ export async function POST(req: Request) {
     const validatedFields = ResetSchema.safeParse(body);
 
     if (!validatedFields.success) {
-      return NextResponse.json(
-        { error: "Trường dữ liệu không hợp lệ" },
-        { status: 406 }
-      );
+      return responses.badRequest("Trường dữ liệu không hợp lệ");
     }
 
     const { email } = validatedFields.data;
 
     const existingUser = await db.account.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (!existingUser) {
-      return NextResponse.json(
-        { error: "Không tồn tại người dùng" },
-        { status: 401 }
-      );
+      return responses.unauthorized("Không tồn tại người dùng");
     }
 
-    const passwordResetToken = await generatePasswordResetToken(
-      existingUser.email
-    );
+    const passwordResetToken = await generatePasswordResetToken(existingUser.email);
 
     await sendPasswordResetEmail(
       existingUser.name,
@@ -42,23 +32,14 @@ export async function POST(req: Request) {
       passwordResetToken.token
     );
 
-    return NextResponse.json(
-      { success: "Gửi email khôi phục mật khẩu thành công" },
-      { status: 200 }
-    );
+    return responses.ok(null, "Gửi email khôi phục mật khẩu thành công");
   } catch (error) {
-    console.log("FORGOT PASSWORD ERROR", error);
+    console.error("[FORGOT PASSWORD ERROR]", error);
 
     if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: "Định dạng JSON không hợp lệ" },
-        { status: 406 }
-      );
+      return responses.badRequest("Định dạng JSON không hợp lệ");
     }
 
-    return NextResponse.json(
-      { error: "Lỗi gửi email khôi phục mật khẩu" },
-      { status: 500 }
-    );
+    return responses.serverError("Lỗi gửi email khôi phục mật khẩu");
   }
 }

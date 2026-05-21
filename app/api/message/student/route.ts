@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -7,10 +7,7 @@ export async function GET(req: Request) {
     const studentCode = searchParams.get("studentCode");
 
     if (!studentCode) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp studentCode" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp studentCode");
     }
 
     const chats = await db.chat.findMany({
@@ -41,11 +38,9 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(chats, { status: 200 });
+    return responses.ok(chats);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy tin nhắn sinh viên" },
-      { status: 500 }
-    );
+    console.error("[GET STUDENT MESSAGES ERROR]", error);
+    return responses.serverError("Lỗi lấy tin nhắn sinh viên");
   }
 }

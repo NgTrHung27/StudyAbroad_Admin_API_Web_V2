@@ -1,8 +1,8 @@
+import { responses } from "@/lib/api-response";
 import { ChatSupportSchema } from "@/data/form-schema";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
 import { ChatSessionRole } from "@prisma/client";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   // Handle preflight
@@ -22,44 +22,29 @@ export async function POST(req: Request) {
     const validatedValues = ChatSupportSchema.safeParse(body);
 
     if (!validatedValues.success) {
-      return NextResponse.json(
-        { error: validatedValues.error.message },
-        { status: 400 }
-      );
+      return responses.badRequest(validatedValues.error.message);
     }
 
     const { message, ...data } = validatedValues.data;
 
     if (data.userId) {
       const user = await db.account.findUnique({
-        where: {
-          id: data.userId,
-        },
+        where: { id: data.userId },
       });
 
       if (!user) {
-        return NextResponse.json(
-          { error: "Người dùng không tồn tại" },
-          { status: 400 }
-        );
+        return responses.notFound("Người dùng không tồn tại");
       }
 
       const existChatSession = await db.chatSession.findFirst({
-        where: {
-          userId: data.userId,
-        },
+        where: { userId: data.userId },
       });
 
       if (existChatSession) {
         if (data.clientId && data.clientId !== existChatSession.clientId) {
           await db.chatSession.update({
-            where: {
-              id: existChatSession.id,
-            },
-            data: {
-              ...data,
-              clientId: data.clientId,
-            },
+            where: { id: existChatSession.id },
+            data: { ...data, clientId: data.clientId },
           });
         }
 
@@ -71,74 +56,29 @@ export async function POST(req: Request) {
           },
         });
 
-        return NextResponse.json({ success: true }, { status: 200 });
+        return responses.ok({ sessionId: existChatSession.id }, "Gửi tin nhắn thành công");
       } else {
         await db.chatSession.create({
           data: {
             ...data,
             messages: {
-              create: [
-                {
-                  message,
-                  role: ChatSessionRole.USER,
-                },
-              ],
+              create: [{ message, role: ChatSessionRole.USER }],
             },
             userId: data.userId,
             clientId: uuid(),
           },
         });
 
-        return NextResponse.json(
-          { success: "Tạo phiên chat thành công" },
-          { status: 200 }
-        );
+        return responses.created(null, "Tạo phiên chat thành công");
       }
     }
 
     if (data.clientId && !data.userId) {
       const existChatSession = await db.chatSession.findFirst({
-        where: {
-          clientId: data.clientId,
-        },
+        where: { clientId: data.clientId },
       });
 
       if (existChatSession) {
-        if (data.userId && data.userId !== existChatSession.userId) {
-          const existUser = await db.account.findUnique({
-            where: {
-              id: data.userId,
-            },
-          });
-
-          if (!existUser) {
-            return NextResponse.json(
-              { error: "Người dùng không tồn tại" },
-              { status: 400 }
-            );
-          }
-
-          await db.chatSession.update({
-            where: {
-              id: existChatSession.id,
-            },
-            data: {
-              ...data,
-              userId: data.userId,
-            },
-          });
-        } else {
-          await db.chatSession.update({
-            where: {
-              id: existChatSession.id,
-            },
-            data: {
-              ...data,
-              userId: undefined,
-            },
-          });
-        }
-
         await db.chatSessionMessage.create({
           data: {
             message,
@@ -147,39 +87,25 @@ export async function POST(req: Request) {
           },
         });
 
-        return NextResponse.json({ success: true }, { status: 200 });
+        return responses.ok({ sessionId: existChatSession.id }, "Gửi tin nhắn thành công");
       } else {
         await db.chatSession.create({
           data: {
             ...data,
             clientId: data.clientId,
             messages: {
-              create: [
-                {
-                  message,
-                  role: ChatSessionRole.USER,
-                },
-              ],
+              create: [{ message, role: ChatSessionRole.USER }],
             },
           },
         });
 
-        return NextResponse.json(
-          { success: "Tạo phiên chat thành công" },
-          { status: 200 }
-        );
+        return responses.created(null, "Tạo phiên chat thành công");
       }
-    } else {
-      return NextResponse.json(
-        {
-          error: "Không thể lưu trữ phiên chat do không tìm thấy mã máy khách",
-        },
-        { status: 400 }
-      );
     }
-  } catch (error) {
-    console.log("ERROR CREATE CHAT SESSION", error);
 
-    return NextResponse.json({ error: "Lỗi tạo phiên chat" }, { status: 500 });
+    return responses.badRequest("Không thể lưu trữ phiên chat do không tìm thấy mã máy khách");
+  } catch (error) {
+    console.error("[CREATE CHAT SESSION ERROR]", error);
+    return responses.serverError("Lỗi tạo phiên chat");
   }
 }

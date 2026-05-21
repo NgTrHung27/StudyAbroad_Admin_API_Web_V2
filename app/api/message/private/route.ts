@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -7,10 +7,7 @@ export async function GET(req: Request) {
     const studentCode = searchParams.get("studentCode");
 
     if (!studentCode) {
-      return NextResponse.json(
-        { error: "Vui lòng cung cấp studentCode" },
-        { status: 400 }
-      );
+      return responses.badRequest("Vui lòng cung cấp studentCode");
     }
 
     const messages = await db.message.findMany({
@@ -39,11 +36,9 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(messages, { status: 200 });
+    return responses.ok(messages);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Lỗi lấy tin nhắn riêng tư" },
-      { status: 500 }
-    );
+    console.error("[GET PRIVATE MESSAGES ERROR]", error);
+    return responses.serverError("Lỗi lấy tin nhắn riêng tư");
   }
 }

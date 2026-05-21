@@ -1,3 +1,4 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 
 export async function GET() {
@@ -10,15 +11,9 @@ export async function GET() {
       select: { id: true, name: true, schoolId: true }
     });
     
-    return Response.json({ 
-      schools, 
-      programs,
-      message: "Database connected successfully"
-    });
+    return responses.ok({ schools, programs }, "Database connected successfully");
   } catch (error: any) {
-    return Response.json({ 
-      error: error.message,
-      code: error.code 
-    }, { status: 500 });
+    console.error("[CHECK DB ERROR]", error);
+    return responses.serverError(error.message);
   }
 }

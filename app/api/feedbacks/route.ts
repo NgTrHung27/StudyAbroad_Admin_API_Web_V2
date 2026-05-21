@@ -1,6 +1,6 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
 import { FeedbackSchema } from "@/types/auth";
-import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -17,14 +17,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(feedbacks, { status: 200 });
+    return responses.ok(feedbacks);
   } catch (error) {
-    console.log("ERROR GET CONTACTS ACTION", error);
-
-    return NextResponse.json(
-      { error: "Lấy dữ liệu phản hồi thất bại" },
-      { status: 500 }
-    );
+    console.error("[GET FEEDBACKS ERROR]", error);
+    return responses.serverError("Lấy dữ liệu phản hồi thất bại");
   }
 }
 
@@ -35,26 +31,18 @@ export async function POST(req: Request) {
     const validatedFields = FeedbackSchema.safeParse(body);
 
     if (!validatedFields.success) {
-      return NextResponse.json(
-        { error: "Trường dữ liệu không hợp lệ" },
-        { status: 400 }
-      );
+      return responses.badRequest("Trường dữ liệu không hợp lệ");
     }
 
     const { ...data } = validatedFields.data;
 
     if (data.schoolId) {
       const school = await db.school.findUnique({
-        where: {
-          id: data.schoolId,
-        },
+        where: { id: data.schoolId },
       });
 
       if (!school) {
-        return NextResponse.json(
-          { error: "Không tìm thấy trường học" },
-          { status: 404 }
-        );
+        return responses.notFound("Không tìm thấy trường học");
       }
     }
 
@@ -65,13 +53,9 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(feedback, { status: 200 });
+    return responses.created(feedback, "Tạo phản hồi thành công");
   } catch (error) {
-    console.log("ERROR CREATE CONTACT ACTION", error);
-
-    return NextResponse.json(
-      { error: "Tạo phản hồi thất bại" },
-      { status: 500 }
-    );
+    console.error("[CREATE FEEDBACK ERROR]", error);
+    return responses.serverError("Tạo phản hồi thất bại");
   }
 }

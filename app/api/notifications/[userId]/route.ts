@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -7,10 +7,7 @@ export async function GET(
 ) {
   try {
     if (!params.userId) {
-      return NextResponse.json(
-        { error: "Không tìm thấy mã người dùng" },
-        { status: 400 }
-      );
+      return responses.badRequest("Không tìm thấy mã người dùng");
     }
 
     const notifications = await db.notificationPush.findMany({
@@ -22,13 +19,9 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(notifications, { status: 200 });
+    return responses.ok(notifications);
   } catch (error) {
-    console.log("Error getting notifications", error);
-
-    return NextResponse.json(
-      { error: "Error getting notifications" },
-      { status: 500 }
-    );
+    console.error("[GET NOTIFICATIONS ERROR]", error);
+    return responses.serverError("Error getting notifications");
   }
 }

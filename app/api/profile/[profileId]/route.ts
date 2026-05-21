@@ -1,5 +1,5 @@
+import { responses } from "@/lib/api-response";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -34,17 +34,12 @@ export async function GET(
     });
 
     if (!profile) {
-      return NextResponse.json(
-        { error: "Không tìm thấy profile trong database" },
-        { status: 500 }
-      );
+      return responses.notFound("Không tìm thấy profile trong database");
     }
 
-    return NextResponse.json(profile, { status: 200 });
+    return responses.ok(profile);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Không lấy được thông tin profile" },
-      { status: 500 }
-    );
+    console.error("[GET PROFILE ERROR]", error);
+    return responses.serverError("Không lấy được thông tin profile");
   }
 }

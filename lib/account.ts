@@ -104,6 +104,11 @@ export const GetAccountByEmail = async (email: string) => {
             gradeScore: true,
             cover: true,
             schoolId: true,
+            profile: {
+              select: {
+                id: true,
+              },
+            },
             school: {
               select: {
                 id: true,
