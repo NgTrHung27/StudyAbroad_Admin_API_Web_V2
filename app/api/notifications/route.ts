@@ -5,9 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   try {
-    const serviceAccount = JSON.parse(
-      process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
-    );
+    const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64
+      ? Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64, "base64").toString("utf-8")
+      : process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+
+    const serviceAccount = JSON.parse(serviceAccountJson as string);
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
