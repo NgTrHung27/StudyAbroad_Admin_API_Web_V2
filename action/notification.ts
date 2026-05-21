@@ -11,9 +11,17 @@ async function getFirebaseAdmin() {
   }
 
   try {
-    const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64;
+    let serviceAccountStr: string;
+
+    if (serviceAccountBase64) {
+      serviceAccountStr = Buffer.from(serviceAccountBase64, "base64").toString("utf-8");
+    } else {
+      serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "";
+    }
+
     if (!serviceAccountStr) {
-      console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set");
+      console.warn("Firebase service account is not set");
       return null;
     }
 

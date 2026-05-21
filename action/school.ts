@@ -12,12 +12,19 @@ import { SendGeneralNotifications } from "./notification";
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
-  );
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+  const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64;
+  let serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "";
+
+  if (serviceAccountBase64) {
+    serviceAccountStr = Buffer.from(serviceAccountBase64, "base64").toString("utf-8");
+  }
+
+  if (serviceAccountStr) {
+    const serviceAccount = JSON.parse(serviceAccountStr);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  }
 }
 
 export const CreateSchool = async (values: CreateSchoolFormValues) => {
