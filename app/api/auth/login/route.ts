@@ -6,12 +6,16 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  console.log("[LOGIN API] Request received:", new Date().toISOString());
+
   try {
     const body = await req.json();
+    console.log("[LOGIN API] Body:", JSON.stringify({ ...body, password: "***" }));
 
     const validatedFields = LoginSchema.safeParse(body);
 
     if (!validatedFields.success) {
+      console.log("[LOGIN API] Validation failed:", validatedFields.error);
       return NextResponse.json(
         { error: "Trường dữ liệu không hợp lệ" },
         { status: 406 }
@@ -19,10 +23,13 @@ export async function POST(req: Request) {
     }
 
     const { email, password } = validatedFields.data;
+    console.log("[LOGIN API] Email:", email);
 
     const existingAccount = await GetAccountByEmail(email!);
+    console.log("[LOGIN API] Account found:", existingAccount ? "YES" : "NO");
 
     if (!existingAccount) {
+      console.log("[LOGIN API] User does not exist with email:", email);
       return NextResponse.json(
         { error: "Không tồn tại người dùng" },
         { status: 401 }
