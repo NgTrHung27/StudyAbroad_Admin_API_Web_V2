@@ -54,20 +54,20 @@ export const responses = {
   noContent: () => NextResponse.json(null, { status: 204 }),
   
   // 400 - Bad Request
-  badRequest: (message = "Yêu cầu không hợp lệ") => error(message, 400),
-  
+  badRequest: (message = "Yêu cầu không hợp lệ", statusCode = 400) => error(message, statusCode),
+
   // 401 - Unauthorized
-  unauthorized: (message = "Không có quyền truy cập") => error(message, 401),
+  unauthorized: (message = "Không có quyền truy cập", statusCode = 401) => error(message, statusCode),
   
   // 403 - Forbidden
-  forbidden: (message = "Tài khoản bị cấm") => error(message, 403),
+  forbidden: (message = "Tài khoản bị cấm", statusCode = 403) => error(message, statusCode),
   
   // 404 - Not Found
-  notFound: (message = "Không tìm thấy") => error(message, 404),
+  notFound: (message = "Không tìm thấy", statusCode = 404) => error(message, statusCode),
   
   // 409 - Conflict
-  conflict: (message = "Dữ liệu đã tồn tại") => error(message, 409),
+  conflict: (message = "Dữ liệu đã tồn tại", statusCode = 409) => error(message, statusCode),
   
   // 500 - Internal Server Error
-  serverError: (message = "Lỗi server") => error(message, 500),
+  serverError: (message = "Lỗi server", statusCode = 500) => error(message, statusCode),
 };
