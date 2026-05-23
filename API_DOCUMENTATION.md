@@ -21,14 +21,50 @@ Content-Type: application/json
 }
 ```
 
+**Response (201):**
+```json
+{
+  "statusCode": 201,
+  "message": "Success",
+  "data": {
+    "token": "eyJhbG...",
+    "refreshToken": "eyJhbG..."
+  }
+}
+```
+
+> **LƯU Ý QUAN TRỌNG VỀ AUTHENTICATION:**
+> Sau khi đăng nhập thành công, App cần lưu lại `token` và `refreshToken` vào local storage.
+> Đối với tất cả các API khác (ngoại trừ `/api/schools`, `/api/news`, `/api/country`, `/api/nameSchools`), App phải gửi kèm token trong header của request:
+> `Authorization: Bearer <token>`
+
+### Get Current Profile (Me)
+API này được dùng để lấy thông tin `UserAuthLogin` của user đang đăng nhập dựa vào token.
+```http
+GET /api/auth/me
+Authorization: Bearer <token>
+```
+
 **Response (200):**
 ```json
 {
-  "success": "Đăng nhập thành công",
-  "user": {
+  "statusCode": 200,
+  "message": "Thành công",
+  "data": {
     "id": "clx123...",
     "email": "user@example.com",
-    "name": "Nguyen Van A"
+    "name": "Nguyen Van A",
+    "phoneNumber": "0909123456",
+    "dob": "2006-01-01T00:00:00.000Z",
+    "student": {
+      "id": "clx456...",
+      "studentCode": "STU001",
+      "status": "APPROVED",
+      "degreeType": "HIGHSCHOOL",
+      "certificateType": "IELTS",
+      "gradeType": "GPA",
+      "gradeScore": 3.5
+    }
   }
 }
 ```

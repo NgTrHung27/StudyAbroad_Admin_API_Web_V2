@@ -4,6 +4,7 @@ import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
 import { LoginSchema } from "@/types/auth";
 import bcrypt from "bcryptjs";
+import { signAccessToken, signRefreshToken } from "@/lib/jwt";
 
 export async function POST(req: Request) {
   try {
@@ -46,7 +47,18 @@ export async function POST(req: Request) {
       return responses.forbidden("Email chưa xác thực, vui lòng kiểm tra hộp thư để được xác thực");
     }
 
-    return responses.ok(existingAccount);
+    const tokenPayload = {
+      accountId: existingAccount.id,
+      email: existingAccount.email,
+    };
+
+    const token = await signAccessToken(tokenPayload);
+    const refreshToken = await signRefreshToken(tokenPayload);
+
+    return responses.created({
+      token,
+      refreshToken,
+    }, "Success");
   } catch (error) {
     console.error("[LOGIN ERROR]", error);
     return responses.serverError("Đăng nhập thất bại");
