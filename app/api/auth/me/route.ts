@@ -1,5 +1,7 @@
 import { responses } from "@/lib/api-response";
 import { verifyToken } from "@/lib/jwt";
+
+export const dynamic = 'force-dynamic';
 import { GetAccountById } from "@/lib/account";
 import { headers } from "next/headers";
 

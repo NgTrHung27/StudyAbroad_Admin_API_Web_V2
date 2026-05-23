@@ -21,6 +21,10 @@ if (!admin.apps.length) {
 
   if (serviceAccountStr) {
     const serviceAccount = JSON.parse(serviceAccountStr);
+    if (serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    }
+    
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
