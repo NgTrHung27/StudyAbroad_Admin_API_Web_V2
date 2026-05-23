@@ -16,6 +16,7 @@ const isPublicApiRoutes = createRouteMatcher([
   "/api/news(.*)",
   "/api/country(.*)",
   "/api/nameSchools(.*)",
+  "/api/edgestore(.*)",
 ]);
 
 export default clerkMiddleware(
