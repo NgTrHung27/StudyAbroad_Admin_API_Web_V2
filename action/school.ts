@@ -7,33 +7,66 @@ import {
   SchoolInformationSchema,
 } from "@/data/form-schema";
 import { db } from "@/lib/db";
-import admin from "firebase-admin";
 import { SendGeneralNotifications } from "./notification";
 
-// Initialize Firebase Admin SDK
-if (!admin.apps.length) {
-  const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64;
-  let serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "";
-
-  if (serviceAccountBase64) {
-    serviceAccountStr = Buffer.from(serviceAccountBase64, "base64").toString("utf-8");
+// Helper to sanitize data by removing $undefined values from Next.js serialization
+function sanitizeData<T>(data: T): T {
+  if (data === null || data === undefined) {
+    return data;
   }
 
-  if (serviceAccountStr) {
-    const serviceAccount = JSON.parse(serviceAccountStr);
-    if (serviceAccount.private_key) {
-      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+  if (typeof data === "string") {
+    // Handle Next.js Date serialization format: $D2023-12-20T00:00:00.000Z
+    if (data === "$undefined" || data === "undefined") {
+      return undefined as unknown as T;
     }
-    
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
+    if (data.startsWith("$D")) {
+      const dateStr = data.slice(2); // Remove "$D" prefix
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return date as unknown as T;
+      }
+    }
+    return data;
   }
+
+  // Handle Date objects - don't convert them
+  if (data instanceof Date) {
+    return data;
+  }
+
+  // Handle empty objects like {} from serialization
+  if (typeof data === "object" && Object.keys(data as object).length === 0) {
+    return undefined as unknown as T;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((item) => sanitizeData(item)) as unknown as T;
+  }
+
+  if (typeof data === "object") {
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value === "$undefined" || value === "undefined" || value === undefined) {
+        continue;
+      }
+      // Skip empty objects
+      if (typeof value === "object" && value !== null && Object.keys(value).length === 0) {
+        continue;
+      }
+      sanitized[key] = sanitizeData(value);
+    }
+    return sanitized as T;
+  }
+
+  return data;
 }
 
 export const CreateSchool = async (values: CreateSchoolFormValues) => {
   try {
-    const validatedValues = CreateSchoolSchema.safeParse(values);
+    // Sanitize data to handle Next.js undefined serialization
+    const sanitizedValues = sanitizeData(values);
+    const validatedValues = CreateSchoolSchema.safeParse(sanitizedValues);
 
     if (!validatedValues.success) {
       console.log(
@@ -256,7 +289,9 @@ export const UpdateSchoolInformation = async (
   values: SchoolInformationFormValues
 ) => {
   try {
-    const validatedValues = SchoolInformationSchema.safeParse(values);
+    // Sanitize data to handle Next.js undefined serialization
+    const sanitizedValues = sanitizeData(values);
+    const validatedValues = SchoolInformationSchema.safeParse(sanitizedValues);
 
     if (!validatedValues.success) {
       console.log(
