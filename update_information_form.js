@@ -1,48 +1,17 @@
-"use client";
+const fs = require('fs');
+const filePath = 'components/forms/school/update/information-form.tsx';
+let content = fs.readFileSync(filePath, 'utf8');
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  SchoolInformationFormValues,
-  SchoolInformationSchema,
-} from "@/data/form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { School } from "@prisma/client";
-import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalTrigger,
-} from "../../../ui/animated-modal";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../../ui/form";
-import { Input } from "../../../ui/input";
-import { Textarea } from "../../../ui/textarea";
-import { SchoolColorPicker } from "../color-picker";
-import { UpdateSchoolInformation } from "@/action/school";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { SingleFileDropzone } from "@/types/generic";
+content = content.replace(
+  `type Props = {
+  school: School;
+};
 
-type Props = {
+export const InformationForm = ({ school }: Props) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);`,
+  `type Props = {
   school: School;
   asModal?: boolean;
   defaultIsUpdating?: boolean;
@@ -51,47 +20,17 @@ type Props = {
 export const InformationForm = ({ school, asModal = true, defaultIsUpdating = false }: Props) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(defaultIsUpdating);
-  const [logo, setLogo] = useState<SingleFileDropzone>({ file: school.logo });
-  const [background, setBackground] = useState<SingleFileDropzone>({
-    file: school.background,
-  });
+  const [isUpdating, setIsUpdating] = useState(defaultIsUpdating);`
+);
 
-  const form = useForm<SchoolInformationFormValues>({
-    resolver: zodResolver(SchoolInformationSchema),
-    mode: "all",
-    defaultValues: {
-      ...school,
-      short: school.short || "",
-    },
-  });
+const returnIndex = content.indexOf('  return (\n    <Modal>');
+if (returnIndex === -1) {
+    console.error("Could not find return statement");
+    process.exit(1);
+}
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = form;
-
-  const onSubmit = async (values: SchoolInformationFormValues) => {
-    setLoading(true);
-    await UpdateSchoolInformation(school.id, values)
-      .then((res) => {
-        if (typeof res.error === "string") {
-          toast.error(res.error);
-        }
-
-        if (res.success) {
-          toast.success(res.success);
-          reset();
-          router.refresh();
-          window.location.reload();
-        }
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const FormFields = (
+const beforeReturn = content.substring(0, returnIndex);
+const newReturn = `  const FormFields = (
     <>
       <FormField
         control={control}
@@ -282,7 +221,7 @@ export const InformationForm = ({ school, asModal = true, defaultIsUpdating = fa
   if (!asModal) {
     return (
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-neutral-900 p-8 rounded-xl border border-gray-200 dark:border-neutral-800">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full p-2">
           <h4 className="text-lg md:text-2xl text-main dark:text-main-foreground font-bold text-center mb-8">
             Thông tin trường học
           </h4>
@@ -356,3 +295,7 @@ export const InformationForm = ({ school, asModal = true, defaultIsUpdating = fa
     </Modal>
   );
 };
+`;
+
+fs.writeFileSync(filePath, beforeReturn + newReturn);
+console.log("Successfully updated information-form.tsx");

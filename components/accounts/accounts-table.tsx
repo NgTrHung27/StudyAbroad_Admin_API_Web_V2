@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { AccountLib } from "@/types/auth";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale/vi";
+import { deleteAccount } from "@/action/account";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -101,6 +103,24 @@ export const AccountsTable = ({ accounts }: AccountsTableProps) => {
   const handleDelete = (account: AccountLib) => {
     setSelectedAccount(account);
     setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedAccount) return;
+
+    try {
+      const result = await deleteAccount(selectedAccount.id);
+      if (result.success) {
+        toast.success(result.success);
+        setShowDeleteConfirm(false);
+        router.refresh();
+      } else if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      toast.error("Đã xảy ra lỗi khi xóa tài khoản");
+    }
   };
 
   return (
@@ -201,7 +221,7 @@ export const AccountsTable = ({ accounts }: AccountsTableProps) => {
                           <Eye className="mr-2 h-4 w-4" />
                           Xem chi tiết
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/accounts/${account.id}/edit`)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Chỉnh sửa
                         </DropdownMenuItem>
@@ -336,7 +356,7 @@ export const AccountsTable = ({ accounts }: AccountsTableProps) => {
             <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
               Hủy
             </Button>
-            <Button variant="destructive" onClick={() => setShowDeleteConfirm(false)}>
+            <Button variant="destructive" onClick={confirmDelete}>
               Xóa
             </Button>
           </DialogFooter>

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { News } from "@prisma/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale/vi";
+import { deleteNews } from "@/action/news";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -103,9 +105,27 @@ export const NewsTable = ({ news }: NewsTableProps) => {
     setShowDetailModal(true);
   };
 
-  const handleDelete = (item: NewsWithSchool) => {
+  const handleDelete = async (item: NewsWithSchool) => {
     setSelectedNews(item);
     setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedNews) return;
+    
+    try {
+      const result = await deleteNews(selectedNews.id);
+      if (result.success) {
+        toast.success(result.success);
+        setShowDeleteConfirm(false);
+        router.refresh();
+      } else if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting news:", error);
+      toast.error("Đã xảy ra lỗi khi xóa tin tức");
+    }
   };
 
   return (
@@ -228,7 +248,7 @@ export const NewsTable = ({ news }: NewsTableProps) => {
                           <Eye className="mr-2 h-4 w-4" />
                           Xem chi tiết
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/news/${item.id}/edit`)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Chỉnh sửa
                         </DropdownMenuItem>
@@ -339,7 +359,7 @@ export const NewsTable = ({ news }: NewsTableProps) => {
             <Button variant="outline" onClick={() => setShowDetailModal(false)}>
               Đóng
             </Button>
-            <Button onClick={() => setShowDetailModal(false)}>
+            <Button onClick={() => router.push(`/news/${selectedNews?.id}/edit`)}>
               <Edit className="mr-2 h-4 w-4" />
               Chỉnh sửa
             </Button>
@@ -362,7 +382,7 @@ export const NewsTable = ({ news }: NewsTableProps) => {
             <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
               Hủy
             </Button>
-            <Button variant="destructive" onClick={() => setShowDeleteConfirm(false)}>
+            <Button variant="destructive" onClick={confirmDelete}>
               Xóa
             </Button>
           </DialogFooter>

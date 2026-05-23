@@ -15,6 +15,44 @@ const client = new Client({
   ssl: { rejectUnauthorized: false },
 });
 
+// Reliable image URLs using picsum.photos (always works)
+const IMAGES = {
+  logo1: 'https://picsum.photos/seed/logo1/200/200',
+  logo2: 'https://picsum.photos/seed/logo2/200/200',
+  logo3: 'https://picsum.photos/seed/logo3/200/200',
+  bg1: 'https://picsum.photos/seed/bg1/800/400',
+  bg2: 'https://picsum.photos/seed/bg2/800/400',
+  bg3: 'https://picsum.photos/seed/bg3/800/400',
+  avatar1: 'https://picsum.photos/seed/avatar1/200/200',
+  avatar2: 'https://picsum.photos/seed/avatar2/200/200',
+  avatar3: 'https://picsum.photos/seed/avatar3/200/200',
+  avatar4: 'https://picsum.photos/seed/avatar4/200/200',
+  avatar5: 'https://picsum.photos/seed/avatar5/200/200',
+  school1: 'https://picsum.photos/seed/school1/800/400',
+  school2: 'https://picsum.photos/seed/school2/800/400',
+  school3: 'https://picsum.photos/seed/school3/800/400',
+  campus1: 'https://picsum.photos/seed/campus1/400/300',
+  campus2: 'https://picsum.photos/seed/campus2/400/300',
+  campus3: 'https://picsum.photos/seed/campus3/400/300',
+  campus4: 'https://picsum.photos/seed/campus4/400/300',
+  program1: 'https://picsum.photos/seed/program1/400/300',
+  program2: 'https://picsum.photos/seed/program2/400/300',
+  program3: 'https://picsum.photos/seed/program3/400/300',
+  student1: 'https://picsum.photos/seed/student1/400/300',
+  student2: 'https://picsum.photos/seed/student2/400/300',
+  scholarship1: 'https://picsum.photos/seed/scholarship1/400/300',
+  scholarship2: 'https://picsum.photos/seed/scholarship2/400/300',
+  news1: 'https://picsum.photos/seed/news1/800/400',
+  news2: 'https://picsum.photos/seed/news2/800/400',
+  news3: 'https://picsum.photos/seed/news3/800/400',
+  news4: 'https://picsum.photos/seed/news4/800/400',
+  news5: 'https://picsum.photos/seed/news5/800/400',
+  gallery1: 'https://picsum.photos/seed/gallery1/400/300',
+  gallery2: 'https://picsum.photos/seed/gallery2/400/300',
+  gallery3: 'https://picsum.photos/seed/gallery3/400/300',
+  certificate: 'https://picsum.photos/seed/certificate/400/300',
+};
+
 async function safeInsert(query: string, params: any[] = []) {
   try {
     const result = await client.query(query, params);
@@ -51,22 +89,22 @@ async function main() {
       ) VALUES 
         (gen_random_uuid(), 'admin@cemc.com', NOW(), $1, 'Admin CEMC', '1990-01-15', 'MALE', 
          '0909123456', '123456789012', '123 Admin Street, District 1, Ho Chi Minh City', 
-         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200', false, false, NOW(), NOW()),
+         $2, false, false, NOW(), NOW()),
         (gen_random_uuid(), 'student1@test.com', NOW(), $1, 'Nguyen Van A', '2005-06-20', 'MALE', 
          '0909123457', '123456789013', '456 Student Ave, District 3, Ho Chi Minh City', 
-         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200', false, false, NOW(), NOW()),
+         $3, false, false, NOW(), NOW()),
         (gen_random_uuid(), 'student2@test.com', NOW(), $1, 'Tran Thi B', '2006-03-10', 'FEMALE', 
          '0909123458', '123456789014', '789 Student Blvd, District 5, Ho Chi Minh City', 
-         'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200', false, false, NOW(), NOW()),
+         $4, false, false, NOW(), NOW()),
         (gen_random_uuid(), 'student3@test.com', NOW(), $1, 'Le Van C', '2005-09-25', 'MALE', 
          '0909123459', '123456789015', '321 Student Rd, District 7, Ho Chi Minh City', 
-         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200', false, false, NOW(), NOW()),
+         $5, false, false, NOW(), NOW()),
         (gen_random_uuid(), 'student4@test.com', NOW(), $1, 'Pham Thi D', '2006-01-05', 'FEMALE', 
          '0909123460', '123456789016', '654 Student Lane, District 2, Ho Chi Minh City', 
-         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200', false, false, NOW(), NOW())
+         $6, false, false, NOW(), NOW())
       ON CONFLICT (email) DO NOTHING
       RETURNING id, email
-    `, [hashedPassword]);
+    `, [hashedPassword, IMAGES.avatar1, IMAGES.avatar2, IMAGES.avatar3, IMAGES.avatar4, IMAGES.avatar5]);
 
     console.log(`  Created ${accountResult.count} accounts`);
     
@@ -132,26 +170,26 @@ async function main() {
         id, logo, background, name, short, description, history, color, 
         "isPublished", country, "createdAt", "updatedAt"
       ) VALUES 
-        (gen_random_uuid(), 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=200',
-         'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800',
+        (gen_random_uuid(), $1,
+         $2,
          'Canada International School', 'CIS',
          'Canada International School - A premier institution for international education in Vietnam.',
          'Founded in 2010, CIS has been providing quality international education for over 15 years.',
          '#E74C3C', true, 'CANADA', NOW(), NOW()),
-        (gen_random_uuid(), 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?w=200',
-         'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=800',
+        (gen_random_uuid(), $3,
+         $4,
          'Korea Global University', 'KGU',
          'Leading Korean university for international students with world-class facilities.',
          'Established in 1995, KGU has produced thousands of successful graduates worldwide.',
          '#3498DB', true, 'KOREA', NOW(), NOW()),
-        (gen_random_uuid(), 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=200',
-         'https://images.unsplash.com/photo-1529156069896-49953e39b3ac?w=800',
+        (gen_random_uuid(), $5,
+         $6,
          'Australia University Vietnam', 'AUV',
          'Bringing Australian education standards to Vietnam with globally recognized degrees.',
          'Founded in 2015 as a partnership between Australian and Vietnamese education authorities.',
          '#2ECC71', true, 'AUSTRALIA', NOW(), NOW())
       ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description
-    `);
+    `, [IMAGES.logo1, IMAGES.bg1, IMAGES.logo2, IMAGES.bg2, IMAGES.logo3, IMAGES.bg3]);
 
     // Get schools
     const schools = await client.query(`SELECT id, name FROM "School" LIMIT 3`);
@@ -164,20 +202,20 @@ async function main() {
     await safeInsert(`
       INSERT INTO "SchoolLocation" (id, "schoolId", cover, name, description, address, "isMain", "createdAt", "updatedAt")
       VALUES 
-        (gen_random_uuid(), $1, 'https://images.unsplash.com/photo-1562774053-701939374585?w=400',
+        (gen_random_uuid(), $1, $2,
          'Main Campus', 'Main campus with modern facilities',
          '123 University Ave, District 1, Ho Chi Minh City', true, NOW(), NOW()),
-        (gen_random_uuid(), $1, 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400',
+        (gen_random_uuid(), $1, $3,
          'Branch Campus', 'Secondary campus for additional programs',
          '456 Education St, District 3, Ho Chi Minh City', false, NOW(), NOW()),
-        (gen_random_uuid(), $2, 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400',
+        (gen_random_uuid(), $4, $5,
          'Seoul Campus', 'Main campus in Seoul',
          '789 Korea Ave, Seoul, South Korea', true, NOW(), NOW()),
-        (gen_random_uuid(), $3, 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400',
+        (gen_random_uuid(), $6, $7,
          'Sydney Campus', 'Main campus in Sydney',
          '321 Australia Rd, Sydney, Australia', true, NOW(), NOW())
       ON CONFLICT (address) DO NOTHING
-    `, [school1Id, school2Id, school3Id]);
+    `, [school1Id, IMAGES.campus1, IMAGES.campus2, school2Id, IMAGES.campus3, school3Id, IMAGES.campus4]);
 
     // 12. SchoolLocationImage
     console.log("[12/52] Creating SchoolLocationImages...");
@@ -185,8 +223,8 @@ async function main() {
     for (const loc of locs.rows) {
       await safeInsert(`
         INSERT INTO "SchoolLocationImage" (id, url, "locationId")
-        VALUES (gen_random_uuid(), 'https://images.unsplash.com/photo-1562774053-701939374585?w=800', $1)
-      `, [loc.id]);
+        VALUES (gen_random_uuid(), $1, $2)
+      `, [IMAGES.campus1, loc.id]);
     }
 
     // 13. SchoolLocationContact
@@ -205,19 +243,19 @@ async function main() {
       INSERT INTO "SchoolProgram" (id, "schoolId", name, description, cover, "isPublished", "createdAt", "updatedAt")
       VALUES 
         (gen_random_uuid(), $1, 'Computer Science', 'Study programming, software development, AI, and data science',
-         'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400', true, NOW(), NOW()),
+         $2, true, NOW(), NOW()),
         (gen_random_uuid(), $1, 'Business Administration', 'Learn business management, marketing, and finance',
-         'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400', true, NOW(), NOW()),
+         $3, true, NOW(), NOW()),
         (gen_random_uuid(), $1, 'Engineering', 'Mechanical, electrical, and civil engineering',
-         'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400', true, NOW(), NOW()),
-        (gen_random_uuid(), $2, 'Korean Studies', 'Learn Korean language, culture, and literature',
-         'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400', true, NOW(), NOW()),
-        (gen_random_uuid(), $2, 'Technology', 'Information Technology, AI, and robotics',
-         'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400', true, NOW(), NOW()),
-        (gen_random_uuid(), $3, 'International Business', 'Global business practices and international trade',
-         'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400', true, NOW(), NOW())
+         $4, true, NOW(), NOW()),
+        (gen_random_uuid(), $5, 'Korean Studies', 'Learn Korean language, culture, and literature',
+         $6, true, NOW(), NOW()),
+        (gen_random_uuid(), $5, 'Technology', 'Information Technology, AI, and robotics',
+         $7, true, NOW(), NOW()),
+        (gen_random_uuid(), $8, 'International Business', 'Global business practices and international trade',
+         $9, true, NOW(), NOW())
       ON CONFLICT ("schoolId", name) DO UPDATE SET description = EXCLUDED.description
-    `, [school1Id, school2Id, school3Id]);
+    `, [school1Id, IMAGES.program1, IMAGES.program2, IMAGES.program3, school2Id, IMAGES.gallery1, IMAGES.gallery2, school3Id, IMAGES.gallery3]);
 
     // 15. SchoolProgramImage
     console.log("[15/52] Creating SchoolProgramImages...");
@@ -225,9 +263,9 @@ async function main() {
     for (const prog of progs.rows) {
       await safeInsert(`
         INSERT INTO "SchoolProgramImage" (id, url, "programId")
-        VALUES (gen_random_uuid(), 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', $1)
+        VALUES (gen_random_uuid(), $1, $2)
         ON CONFLICT DO NOTHING
-      `, [prog.id]);
+      `, [IMAGES.program1, prog.id]);
     }
 
     // 16. SchoolGallery
@@ -236,12 +274,12 @@ async function main() {
       INSERT INTO "SchoolGallery" (id, "schoolId", name, description, cover, "createdAt", "updatedAt")
       VALUES 
         (gen_random_uuid(), $1, 'Campus Tour', 'Virtual tour of our beautiful campus facilities',
-         'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400', NOW(), NOW()),
+         $2, NOW(), NOW()),
         (gen_random_uuid(), $1, 'Student Life', 'Activities, events, and student experiences',
-         'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400', NOW(), NOW()),
-        (gen_random_uuid(), $2, 'Campus Events', 'Annual campus events and celebrations',
-         'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400', NOW(), NOW())
-    `, [school1Id, school2Id]);
+         $3, NOW(), NOW()),
+        (gen_random_uuid(), $4, 'Campus Events', 'Annual campus events and celebrations',
+         $5, NOW(), NOW())
+    `, [school1Id, IMAGES.gallery1, IMAGES.gallery2, school2Id, IMAGES.gallery3]);
 
     // 17. SchoolGalleryImage
     console.log("[17/52] Creating SchoolGalleryImages...");
@@ -249,8 +287,8 @@ async function main() {
     for (const gal of gals.rows) {
       await safeInsert(`
         INSERT INTO "SchoolGalleryImage" (id, url, "galleryId")
-        VALUES (gen_random_uuid(), 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800', $1)
-      `, [gal.id]);
+        VALUES (gen_random_uuid(), $1, $2)
+      `, [IMAGES.gallery1, gal.id]);
     }
 
     // 18. SchoolScholarship
@@ -260,18 +298,18 @@ async function main() {
       VALUES 
         (gen_random_uuid(), $1, 'Academic Excellence Scholarship', 
          'Full tuition waiver for students with outstanding academic performance (GPA 3.8+)',
-         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400', true, NOW(), NOW()),
+         $2, true, NOW(), NOW()),
         (gen_random_uuid(), $1, 'International Student Grant', 
          'Financial support covering 50% tuition for international students',
-         'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400', true, NOW(), NOW()),
-        (gen_random_uuid(), $2, 'Korean Government Scholarship', 
+         $3, true, NOW(), NOW()),
+        (gen_random_uuid(), $4, 'Korean Government Scholarship', 
          'KGSP scholarship for outstanding international students',
-         'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400', true, NOW(), NOW()),
-        (gen_random_uuid(), $3, 'Australia Excellence Award', 
+         $5, true, NOW(), NOW()),
+        (gen_random_uuid(), $6, 'Australia Excellence Award', 
          'Merit-based scholarship for high-achieving students',
-         'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400', true, NOW(), NOW())
+         $7, true, NOW(), NOW())
       ON CONFLICT ("schoolId", name) DO UPDATE SET description = EXCLUDED.description
-    `, [school1Id, school2Id, school3Id]);
+    `, [school1Id, IMAGES.scholarship1, IMAGES.scholarship2, school2Id, IMAGES.gallery1, school3Id, IMAGES.gallery2]);
 
     // 19. SchoolScholarshipImage
     console.log("[19/52] Creating SchoolScholarshipImages...");
@@ -279,8 +317,8 @@ async function main() {
     for (const sch of schs.rows) {
       await safeInsert(`
         INSERT INTO "SchoolScholarshipImage" (id, url, "scholarshipId")
-        VALUES (gen_random_uuid(), 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800', $1)
-      `, [sch.id]);
+        VALUES (gen_random_uuid(), $1, $2)
+      `, [IMAGES.scholarship1, sch.id]);
     }
 
     // ============================================================
@@ -296,23 +334,32 @@ async function main() {
         cover, status, additional, "createdAt", "updatedAt"
       ) VALUES 
         ($1, $2, $3, 'STU2025001', 'HIGHSCHOOL', 'IELTS', 
-         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400',
-         'GPA', 3.8, 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400',
+         $4,
+         'GPA', 3.8, $5,
          'APPROVED', 'Completed AP Computer Science with honors', NOW(), NOW()),
-        ($4, $5, $6, 'STU2025002', 'HIGHSCHOOL', 'TOEFL', 
-         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400',
-         'GPA', 3.5, 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400',
+        ($6, $7, $8, 'STU2025002', 'HIGHSCHOOL', 'TOEFL', 
+         $9,
+         'GPA', 3.5, $10,
          'AWAITING', 'Active member of debate club', NOW(), NOW()),
-        ($7, $8, $9, 'STU2025003', 'HIGHSCHOOL', 'IELTS', 
-         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400',
-         'CGPA', 3.9, 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400',
+        ($11, $12, $13, 'STU2025003', 'HIGHSCHOOL', 'IELTS', 
+         $14,
+         'CGPA', 3.9, $15,
          'STUDYING', 'Captain of basketball team, volunteer work', NOW(), NOW()),
-        ($10, $11, $3, 'STU2025004', 'UNIVERSITY', 'IELTS', 
-         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400',
-         'GPA', 3.6, 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400',
+        ($16, $17, $3, 'STU2025004', 'UNIVERSITY', 'IELTS', 
+         $18,
+         'GPA', 3.6, $19,
          'APPROVED', 'Previous degree in Economics', NOW(), NOW())
       ON CONFLICT ("studentCode") DO UPDATE SET status = EXCLUDED.status
-    `, [account2Id, account2Id, school1Id, account3Id, account3Id, school2Id, account4Id, account4Id, school3Id, account5Id, account5Id]);
+    `, [
+      account2Id, account2Id, school1Id, 
+      IMAGES.certificate, IMAGES.student1,
+      account3Id, account3Id, school2Id,
+      IMAGES.certificate, IMAGES.student2,
+      account4Id, account4Id, school3Id,
+      IMAGES.certificate, IMAGES.gallery1,
+      account5Id, account5Id,
+      IMAGES.certificate, IMAGES.gallery2
+    ]);
 
     // Get students
     const students = await client.query(`SELECT id, "studentCode" FROM "Student" LIMIT 4`);
@@ -380,20 +427,20 @@ async function main() {
       VALUES 
         (gen_random_uuid(), $1, 'Tuyển sinh khóa 2026', 
          'Chương trình tuyển sinh cho năm học 2026 đã chính thức mở. Hạn nộp hồ sơ: 30/06/2026.',
-         'ANNOUNCEMENT', 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800', true, NOW(), NOW()),
-        (gen_random_uuid(), $2, 'Hội thảo du học Korea 2026', 
+         'ANNOUNCEMENT', $2, true, NOW(), NOW()),
+        (gen_random_uuid(), $3, 'Hội thảo du học Korea 2026', 
          'Sự kiện hội thảo về du học Hàn Quốc sẽ diễn ra vào ngày 20/01/2026.',
-         'EVENT', 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800', true, NOW(), NOW()),
+         'EVENT', $4, true, NOW(), NOW()),
         (gen_random_uuid(), NULL, 'CEMC - Chào mừng năm mới 2026', 
          'Canada Medical and Education Center xin chúc mừng năm mới 2026.',
-         'BLOG', 'https://images.unsplash.com/photo-1467810563316-b5476525c727?w=800', true, NOW(), NOW()),
-        (gen_random_uuid(), $3, 'Lễ tốt nghiệp 2025', 
+         'BLOG', $5, true, NOW(), NOW()),
+        (gen_random_uuid(), $6, 'Lễ tốt nghiệp 2025', 
          'Chúc mừng các sinh viên đã hoàn thành chương trình học và nhận bằng tốt nghiệp.',
-         'EVENT', 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800', true, NOW(), NOW()),
+         'EVENT', $7, true, NOW(), NOW()),
         (gen_random_uuid(), $1, 'Thông báo về học bổng mới', 
          'Trường vừa công bố chương trình học bổng mới cho sinh viên quốc tế xuất sắc.',
-         'ANNOUNCEMENT', 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800', true, NOW(), NOW())
-    `, [school1Id, school2Id, school3Id]);
+         'ANNOUNCEMENT', $8, true, NOW(), NOW())
+    `, [school1Id, IMAGES.news1, school2Id, IMAGES.news2, IMAGES.news3, school3Id, IMAGES.news4, IMAGES.news5]);
 
     // 48. Feedback
     console.log("[48/52] Creating Feedbacks...");
@@ -449,9 +496,7 @@ async function main() {
     console.log("  - News (5 articles)");
     console.log("  - Feedback (4 feedbacks)");
     console.log("  - ChatSupport (2 sessions)");
-    console.log("\n⚠️  Notes:");
-    console.log("  - Image URLs use Unsplash placeholders");
-    console.log("  - Run Prisma Studio for full data management");
+    console.log("\n📷 Images: Using picsum.photos (reliable placeholder service)");
     console.log("=".repeat(60));
 
   } catch (error) {

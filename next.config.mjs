@@ -32,9 +32,10 @@ const nextConfig = {
       },
       { hostname: "utfs.io" },
       { hostname: "api.microlink.io" },
+      { hostname: "images.unsplash.com" },
+      { hostname: "picsum.photos" },
     ],
   },
-  serverExternalPackages: ["ably", "svix"],
 };
 
 export default nextConfig;

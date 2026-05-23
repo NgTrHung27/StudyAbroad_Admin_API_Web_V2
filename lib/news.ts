@@ -2,9 +2,6 @@ import { db } from "./db";
 
 export const GetAllNews = async () => {
   const news = await db.news.findMany({
-    where: {
-      isPublished: true,
-    },
     include: {
       school: {
         select: {
