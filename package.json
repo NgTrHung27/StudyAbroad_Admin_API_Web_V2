@@ -64,6 +64,7 @@
     "firebase-admin": "^10.3.0",
     "framer-motion": "^11.3.24",
     "is-admin": "^4.0.0",
+    "jose": "^6.2.3",
     "lucide-react": "^0.412.0",
     "marked": "^14.0.0",
     "mini-svg-data-uri": "^1.4.4",
