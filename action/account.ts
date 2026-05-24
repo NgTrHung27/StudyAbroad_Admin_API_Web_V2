@@ -101,7 +101,6 @@ export const createAccount = async (data: {
                 certificateImg: "",
                 gradeType: GradeType.GPA,
                 gradeScore: 0,
-                schoolId: "",
               },
             }
           : undefined,
@@ -170,7 +169,6 @@ export const updateAccount = async (
             certificateImg: "",
             gradeType: GradeType.GPA,
             gradeScore: 0,
-            schoolId: "",
           },
         });
       }
