@@ -19,8 +19,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
-import { StudentStatus, Account, Student } from "@prisma/client";
-
+import { StudentStatus } from "@prisma/client";
+import { GetAccountById } from "@/lib/account";
 const accountFormSchema = z.object({
   email: z.string().email({ message: "Vui lòng nhập email hợp lệ" }),
   name: z.string().min(2, { message: "Tên phải có ít nhất 2 ký tự" }),
@@ -36,9 +36,7 @@ const accountFormSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
-type AccountWithStudent = Account & {
-  student: Pick<Student, "id" | "studentCode" | "status"> | null;
-};
+type AccountWithStudent = NonNullable<Awaited<ReturnType<typeof GetAccountById>>>;
 
 type Props = {
   account: AccountWithStudent;
