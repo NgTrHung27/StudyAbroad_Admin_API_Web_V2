@@ -139,6 +139,7 @@ export const updateAccount = async (
         dob: sanitizedData.dob,
         address: sanitizedData.address,
         idCardNumber: sanitizedData.idCardNumber,
+        ...(sanitizedData.status === StudentStatus.APPROVED && { emailVerified: new Date() }),
       },
     });
 
