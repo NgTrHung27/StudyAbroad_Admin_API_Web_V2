@@ -101,7 +101,6 @@ export const createAccount = async (data: {
                 certificateImg: "",
                 gradeType: GradeType.GPA,
                 gradeScore: 0,
-                schoolId: "",
               },
             }
           : undefined,
@@ -140,6 +139,7 @@ export const updateAccount = async (
         dob: sanitizedData.dob,
         address: sanitizedData.address,
         idCardNumber: sanitizedData.idCardNumber,
+        ...(sanitizedData.status === StudentStatus.APPROVED && { emailVerified: new Date() }),
       },
     });
 
@@ -170,7 +170,6 @@ export const updateAccount = async (
             certificateImg: "",
             gradeType: GradeType.GPA,
             gradeScore: 0,
-            schoolId: "",
           },
         });
       }

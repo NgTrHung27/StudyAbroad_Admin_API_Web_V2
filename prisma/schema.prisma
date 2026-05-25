@@ -412,8 +412,8 @@ model Student {
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   // Education
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   // messeger 
   messeages Message[]
