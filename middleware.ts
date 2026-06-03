@@ -8,6 +8,7 @@ const isPublicRoutes = createRouteMatcher([
   "/api(.*)",
   "/socket.io(.*)",
   "/firebase-messaging-sw.js(.*)",
+  "/auth/new-verification(.*)",
 ]);
 
 const isPublicApiRoutes = createRouteMatcher([
