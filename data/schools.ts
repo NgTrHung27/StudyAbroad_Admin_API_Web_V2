@@ -291,3 +291,55 @@ export const GetSchoolFeedbacks = async (schoolId: string) => {
     return [];
   }
 };
+
+export const GetSchoolProgram = async (programId: string) => {
+  try {
+    const program = await db.schoolProgram.findUnique({
+      where: {
+        id: programId,
+      },
+      include: {
+        images: true,
+        school: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          }
+        }
+      },
+    });
+
+    return program;
+  } catch (error) {
+    console.log("GET SCHOOL PROGRAM DATA ERROR", error);
+
+    return null;
+  }
+};
+
+export const GetSchoolScholarship = async (scholarshipId: string) => {
+  try {
+    const scholarship = await db.schoolScholarship.findUnique({
+      where: {
+        id: scholarshipId,
+      },
+      include: {
+        images: true,
+        school: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          }
+        }
+      },
+    });
+
+    return scholarship;
+  } catch (error) {
+    console.log("GET SCHOOL SCHOLARSHIP DATA ERROR", error);
+
+    return null;
+  }
+};
