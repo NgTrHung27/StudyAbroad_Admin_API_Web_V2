@@ -189,7 +189,7 @@ const DeleteAccountContent = () => {
 
 const DeleteAccountPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-55 via-white to-orange-55 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-900 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-50 via-white to-orange-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-900 p-6">
       <Suspense
         fallback={
           <div className="flex flex-col items-center justify-center p-10 bg-white/80 backdrop-blur-md dark:bg-zinc-900/80 rounded-3xl shadow-2xl max-w-md w-full border border-white/50 dark:border-zinc-800">
@@ -200,6 +200,35 @@ const DeleteAccountPage = () => {
       >
         <DeleteAccountContent />
       </Suspense>
+
+      <div className="mt-8 max-w-md w-full bg-white/70 backdrop-blur-md dark:bg-zinc-900/70 p-6 rounded-2xl border border-white/50 dark:border-zinc-800 shadow-lg text-xs text-gray-500 dark:text-gray-400 space-y-3">
+        <h2 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
+          Chính sách Xóa tài khoản & Dữ liệu - Ứng dụng Multinational Study Abroad
+        </h2>
+        <p>
+          Trang web này được cung cấp bởi nhà phát triển <strong>CEMC LTD.CO</strong> dành riêng cho người dùng ứng dụng di động <strong>Multinational Study Abroad</strong> để yêu cầu xóa tài khoản và dữ liệu liên quan theo chính sách bảo mật của Google Play Store.
+        </p>
+        <div>
+          <span className="font-medium text-gray-600 dark:text-gray-300">Các bước yêu cầu xóa:</span>
+          <ol className="list-decimal list-inside mt-1 ml-1 space-y-1">
+            <li>Nhập địa chỉ email đã dùng để đăng ký tài khoản của bạn vào biểu mẫu trên.</li>
+            <li>Bấm nút <strong>"Gửi yêu cầu xóa"</strong>. Hệ thống sẽ gửi một email xác thực đến địa chỉ của bạn.</li>
+            <li>Mở email từ hệ thống và bấm vào nút <strong>"Xóa tài khoản"</strong> trong vòng 1 giờ để xác nhận việc xóa.</li>
+          </ol>
+        </div>
+        <div>
+          <span className="font-medium text-gray-600 dark:text-gray-300">Loại dữ liệu sẽ bị xóa vĩnh viễn:</span>
+          <p className="mt-0.5">
+            Thông tin tài khoản cá nhân (tên, email, số điện thoại, mật khẩu, ngày sinh, địa chỉ, ảnh đại diện, số CMND/CCCD), và hồ sơ học sinh liên quan (điểm số, loại chứng chỉ học tập, trường học đăng ký).
+          </p>
+        </div>
+        <div>
+          <span className="font-medium text-gray-600 dark:text-gray-300">Lưu giữ dữ liệu:</span>
+          <p className="mt-0.5">
+            Mọi dữ liệu của bạn sẽ bị xóa ngay lập tức khi bạn xác thực yêu cầu qua email. Một số dữ liệu giao dịch hoặc logs lịch sử liên quan đến hệ thống có thể được lưu trữ ẩn danh tối đa 30 ngày để phục vụ yêu cầu kiểm toán và bảo mật hệ thống trước khi bị xóa bỏ hoàn toàn.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
