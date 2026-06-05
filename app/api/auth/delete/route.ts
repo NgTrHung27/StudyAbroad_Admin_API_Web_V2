@@ -31,19 +31,17 @@ export async function DELETE(req: Request) {
       if (!isPasswordMatch) {
         return responses.forbidden("Thông tin tài khoản không chính xác");
       }
-
-      const deleteAccountToken = await generateDeleteAccountToken(existingAccount.email);
-
-      await sendDeleteAccountEmail(
-        existingAccount.name,
-        existingAccount.email,
-        deleteAccountToken.token
-      );
-
-      return responses.ok(null, "Gửi email xác nhận xóa tài khoản thành công");
     }
 
-    return responses.ok({ account: existingAccount.email }, "Tìm thấy tài khoản");
+    const deleteAccountToken = await generateDeleteAccountToken(existingAccount.email);
+
+    await sendDeleteAccountEmail(
+      existingAccount.name,
+      existingAccount.email,
+      deleteAccountToken.token
+    );
+
+    return responses.ok(null, "Gửi email xác nhận xóa tài khoản thành công");
   } catch (error) {
     console.error("[DELETE ACCOUNT ERROR]", error);
     return responses.serverError("Có lỗi xảy ra, vui lòng thử lại sau");
