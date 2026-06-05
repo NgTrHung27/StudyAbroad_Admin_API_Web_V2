@@ -203,10 +203,10 @@ const DeleteAccountPage = () => {
 
       <div className="mt-8 max-w-md w-full bg-white/70 backdrop-blur-md dark:bg-zinc-900/70 p-6 rounded-2xl border border-white/50 dark:border-zinc-800 shadow-lg text-xs text-gray-500 dark:text-gray-400 space-y-3">
         <h2 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
-          Chính sách Xóa tài khoản & Dữ liệu - Ứng dụng Study Abroad - CEMC LTD.CO
+          Chính sách Xóa tài khoản & Dữ liệu - Ứng dụng Multinational Study Abroad
         </h2>
         <p>
-          Trang web này được cung cấp bởi nhà phát triển <strong>CEMC LTD.CO</strong> dành riêng cho người dùng ứng dụng di động <strong>Study Abroad - CEMC LTD.CO</strong> để yêu cầu xóa tài khoản và dữ liệu liên quan theo chính sách bảo mật của Google Play Store.
+          Trang web này được cung cấp bởi nhà phát triển <strong>CEMC LTD.CO</strong> dành riêng cho người dùng ứng dụng di động <strong>Multinational Study Abroad</strong> để yêu cầu xóa tài khoản và dữ liệu liên quan theo chính sách bảo mật của Google Play Store.
         </p>
         <div>
           <span className="font-medium text-gray-600 dark:text-gray-300">Các bước yêu cầu xóa:</span>
