@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "gabayan170@gmail.com",
+    user: process.env.EMAIL_USER || "trunghungpq456@gmail.com",
     pass: process.env.EMAIL_APP_PASSWORD,
   },
 });
@@ -13,7 +13,7 @@ export const sendVerificationEmail = async (
   name: string,
   senderEmail: string,
   email: string,
-  token: string
+  token: string,
 ) => {
   const confirmLink = `${process.env.NEXT_PUBLIC_URL}/auth/new-verification?token=${token}`;
 
@@ -46,7 +46,7 @@ export const sendVerificationEmail = async (
 export const sendPasswordResetEmail = async (
   name: string,
   email: string,
-  token: string
+  token: string,
 ) => {
   const resetLink = `${process.env.NEXT_PUBLIC_URL}/auth/new-password?token=${token}`;
 
@@ -80,7 +80,7 @@ export const sendPasswordResetEmail = async (
 export const sendDeleteAccountEmail = async (
   name: string,
   email: string,
-  token: string
+  token: string,
 ) => {
   const deleteLink = `${process.env.NEXT_PUBLIC_URL}/auth/delete-account?token=${token}`;
 
@@ -114,7 +114,7 @@ export const sendDeleteAccountEmail = async (
 export const sendWelcomeEmail = async (
   name: string,
   studentCode: string,
-  email: string
+  email: string,
 ) => {
   const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
